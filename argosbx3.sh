@@ -89,7 +89,7 @@ wpv6=$(echo "$warpurl" | awk -F'：' '/IPV6/{print $2}' | xargs)
 res=$(echo "$warpurl" | awk -F'：' '/reserved/{print $2}' | xargs)
 fi
 if [ -n "$name" ]; then
-sxname=$name-
+sxname=$name
 echo "$sxname" > "$HOME/agsbx/name"
 echo
 echo "所有节点名称前缀：$name"
