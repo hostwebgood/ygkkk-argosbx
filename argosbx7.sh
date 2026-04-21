@@ -411,6 +411,8 @@ EOF
 else
 vlp=vlptargo
 fi
+if [ -n "$hyp" ]; then
+hypx=hyptx
 if [ -z "$port_hy2x" ] && [ ! -e "$HOME/agsbx/port_hy2x" ]; then
 port_hy2x=$(shuf -i 10000-65535 -n 1)
 echo "$port_hy2x" > "$HOME/agsbx/port_hy2x"
