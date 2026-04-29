@@ -224,7 +224,7 @@ url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
 fi
 if [ -n "$xhp" ]; then
-hyp=hypt
+xhp=xhpt
 if [ -z "${port_xh}" ] && [ ! -e "$HOME/agsbx/port_xh" ]; then
 port_xh=$(shuf -i 10000-65535 -n 1)
 echo "${port_xh}" > "$HOME/agsbx/port_xh"
