@@ -184,39 +184,11 @@ cat > "$HOME/agsbx/xr.json" <<EOF
   },
   "inbounds": [
 EOF
-insuuid
-if [ -n "$xhp" ] || [ -n "$vlp" ]; then
-if [ -z "$ym_vl_re" ]; then
-ym_vl_re=player.live-video.net
-fi
-echo "$ym_vl_re" > "$HOME/agsbx/ym_vl_re"
-echo "Reality域名：$ym_vl_re"
-if [ ! -e "$HOME/agsbx/xrk/private_key" ]; then
-key_pair=$("$HOME/agsbx/xray" x25519)
-private_key=$(echo "$key_pair" | grep "PrivateKey" | awk '{print $2}')
-public_key=$(echo "$key_pair" | grep "Password" | awk '{print $2}')
-short_id=$(date +%s%N | sha256sum | cut -c 1-8)
-echo "$private_key" > "$HOME/agsbx/xrk/private_key"
-echo "$public_key" > "$HOME/agsbx/xrk/public_key"
-echo "$short_id" > "$HOME/agsbx/xrk/short_id"
-fi
-private_key_x=$(cat "$HOME/agsbx/xrk/private_key")
-public_key_x=$(cat "$HOME/agsbx/xrk/public_key")
-short_id_x=$(cat "$HOME/agsbx/xrk/short_id")
-fi
-if [ -n "$xhp" ] || [ -n "$vxp" ] || [ -n "$vwp" ]; then
-if [ ! -e "$HOME/agsbx/xrk/dekey" ]; then
-vlkey=$("$HOME/agsbx/xray" vlessenc)
-dekey=$(echo "$vlkey" | grep '"decryption":' | sed -n '2p' | cut -d' ' -f2- | tr -d '"')
-enkey=$(echo "$vlkey" | grep '"encryption":' | sed -n '2p' | cut -d' ' -f2- | tr -d '"')
-echo "$dekey" > "$HOME/agsbx/xrk/dekey"
-echo "$enkey" > "$HOME/agsbx/xrk/enkey"
-fi
-dekey=$(cat "$HOME/agsbx/xrk/dekey")
-enkey=$(cat "$HOME/agsbx/xrk/enkey")
-fi
 
 insuuid
+if [ -n "$xhp" ] || [ -n "$vlp" ]; then
+ym_vl_re=player.live-video.net
+fi
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 36500 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
 if [ ! -f "$HOME/agsbx/private.key" ]; then
@@ -267,7 +239,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
     }
 EOF
 else
-hyp=hyptargo
+xhp=xhptargo
 fi
 if [ -n "$vxp" ]; then
 vxp=vxpt
