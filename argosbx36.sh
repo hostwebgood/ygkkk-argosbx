@@ -41,7 +41,7 @@ export warp=${warp:-''}
 export name=${name:-''}
 export oap=${oap:-''}
 v46url="https://icanhazip.com"
-agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx33.sh"
+agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx36.sh"
 showmode(){
 echo "Argosbx脚本一键SSH命令生器在线网址：https://yonggekkk.github.io/argosbx/"
 echo "主脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/argosbx/main/argosbx.sh) 或 bash <(wget -qO- https://raw.githubusercontent.com/yonggekkk/argosbx/main/argosbx.sh)"
@@ -202,6 +202,10 @@ port_xh=$(shuf -i 10000-65535 -n 1)
 echo "${port_xh}" > "$HOME/agsbx/port_xh"
 elif [ -n "${port_xh}" ]; then
 echo "${port_xh}" > "$HOME/agsbx/port_xh"
+iptables -t nat -A PREROUTING -p udp --dport 26000:27000 -j DNAT --to-destination :${port_xh}
+ip6tables -t nat -A PREROUTING -p udp --dport 26000:27000 -j DNAT --to-destination :${port_xh}
+netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 fi
 port_xh=$(cat "$HOME/agsbx/port_xh")
 echo "Hysteria2端口：${port_xh}"
@@ -381,10 +385,6 @@ EOF
 else
 vlp=vlptargo
 fi
-iptables -t nat -A PREROUTING -p udp --dport 26000:27000 -j DNAT --to-destination :${port_xh}
-ip6tables -t nat -A PREROUTING -p udp --dport 26000:27000 -j DNAT --to-destination :${port_xh}
-netfilter-persistent save >/dev/null 2>&1
-service iptables save >/dev/null 2>&1
 }
 
 installsb(){
