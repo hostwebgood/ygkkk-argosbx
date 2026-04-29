@@ -236,7 +236,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
           ]
         }
       }
-    }
+    },
 EOF
 else
 xhp=xhptargo
