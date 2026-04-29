@@ -1165,7 +1165,7 @@ short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-xhttp-reality-enc 】支持ENC加密，节点信息如下："
+echo "💣【 hysteria2 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
 vl_xh_link="hysteria2://$uuid@$server_ip:$port_xh?security=tls&alpn=h3&insecure=1&sni=player.live-video.net&obfs=none#${sxname} Hysteria2"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
