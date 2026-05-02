@@ -245,7 +245,7 @@ fi
 if [ -n "$vxp" ]; then
 vxp=vxpt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$openssl rand -base64 16
+sskey={sskey:-"$(openssl rand -base64 16)"}
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
@@ -1465,15 +1465,4 @@ netfilter-persistent save >/dev/null 2>&1
 echo
 echo "iptables执行开放所有端口"
 fi
-ins
-cip
-echo
-else
-echo "Argosbx脚本已安装"
-echo
-argosbxstatus
-echo
-echo "相关快捷方式如下："
-showmode
-exit
-fi
+
