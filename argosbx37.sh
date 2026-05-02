@@ -1468,7 +1468,7 @@ fi
 ins
 cip
 echo
-
+else
 echo "Argosbx脚本已安装"
 echo
 argosbxstatus
