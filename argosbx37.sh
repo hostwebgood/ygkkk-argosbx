@@ -245,7 +245,7 @@ fi
 if [ -n "$vxp" ]; then
 vxp=vxpt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$sskey:-"$(openssl rand -base64 16)
+sskey=${sskey:-"$(openssl rand -base64 16)}
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
@@ -1167,9 +1167,9 @@ echo "$vl_xh_link"
 echo
 fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
-echo "💣【 Vless-xhttp-enc 】支持ENC加密，节点信息如下："
+echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="vless://$uuid@$server_ip:$port_vx?encryption=$enkey&flow=xtls-rprx-vision&type=xhttp&path=$uuid-vx&mode=auto#${sxname} Xhttp-ENC"
+vl_vx_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_vx" | base64 -w0)#${sxname} Shadowsocks"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link"
 echo
@@ -1467,6 +1467,7 @@ echo "iptables执行开放所有端口"
 fi
 ins
 cip
+echo
 
 echo "Argosbx脚本已安装"
 echo
