@@ -244,9 +244,7 @@ fi
 
 if [ -n "$vxp" ]; then
 vxp=vxpt
-if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$qAln1GlVCZi5iJUObHUEKw==
-echo "$sskey" > "$HOME/agsbx/sskey"
+
 fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
 port_vx=$(shuf -i 10000-65535 -n 1)
@@ -264,7 +262,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
       "port": $port_vx,
       "settings": {
         "method": "2022-blake3-aes-128-gcm",
-        "password": "$sskey",
+        "password": "qAln1GlVCZi5iJUObHUEKw==",
         "network": "tcp,udp"
       },
       "sniffing": {
