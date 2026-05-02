@@ -1467,7 +1467,8 @@ echo "iptables执行开放所有端口"
 fi
 ins
 cip
-
+echo
+else
 echo "Argosbx脚本已安装"
 echo
 argosbxstatus
