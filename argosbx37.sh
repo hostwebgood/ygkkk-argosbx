@@ -1465,4 +1465,17 @@ netfilter-persistent save >/dev/null 2>&1
 echo
 echo "iptables执行开放所有端口"
 fi
+ins
+cip
+echo
+else
+echo "Argosbx脚本已安装"
+echo
+argosbxstatus
+echo
+echo "相关快捷方式如下："
+showmode
+exit
+fi
+
 
