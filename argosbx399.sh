@@ -571,7 +571,7 @@ if [ -n "$ssp" ]; then
 ssp=sspt
 if [ ! -e "$HOME/agsbx/sskey1" ]; then
 sskey1=$("$HOME/agsbx/sing-box" generate rand 16 --base64)
-echo "$sskey1" > "$HOME/agsbx/sskey"
+echo "$sskey1" > "$HOME/agsbx/sskey1"
 fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
 port_ss=$(shuf -i 10000-65535 -n 1)
@@ -579,7 +579,7 @@ echo "$port_ss" > "$HOME/agsbx/port_ss"
 elif [ -n "$port_ss" ]; then
 echo "$port_ss" > "$HOME/agsbx/port_ss"
 fi
-sskey1=$(cat "$HOME/agsbx/sskey")
+sskey1=$(cat "$HOME/agsbx/sskey1")
 port_ss=$(cat "$HOME/agsbx/port_ss")
 echo "Shadowsocks-2022端口：$port_ss"
 cat >> "$HOME/agsbx/sb.json" <<EOF
@@ -1157,7 +1157,7 @@ if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
 public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
-sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
+sskey1=$(cat "$HOME/agsbx/sskey1" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 hysteria2 】节点信息如下："
