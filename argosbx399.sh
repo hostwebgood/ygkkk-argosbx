@@ -1170,7 +1170,7 @@ fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_vx" | base64 -w0)#${sxname} Shadowsocks"
+vl_vx_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_vx#${sxname} Shadowsocks" | base64 -w0)"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link"
 echo
