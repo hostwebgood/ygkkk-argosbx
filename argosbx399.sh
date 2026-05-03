@@ -245,8 +245,9 @@ fi
 if [ -n "$vxp" ]; then
 vxp=vxpt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-#sskey=$(openssl rand -base64 16)
+
 [ -z "$sskey" ] && sskey="$(openssl rand -base64 16)"
+$sskey=sskey
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
@@ -1170,7 +1171,7 @@ fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="ss://2022-blake3-aes-128-gcm:sskey@$server_ip:$port_vx#${sxname} Shadowsocks"
+vl_vx_link="ss://2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_vx#${sxname} Shadowsocks"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link"
 echo
