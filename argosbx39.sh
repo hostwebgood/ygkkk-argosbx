@@ -244,7 +244,7 @@ fi
 
 if [ -n "$vxp" ]; then
 vxp=vxpt
-sskey=$("$HOME/agsbx/xray" command openssl rand -base64 16)
+sskey=$(openssl rand -base64 16)
 echo "$sskey" > "$HOME/agsbx/sskey"
 
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
