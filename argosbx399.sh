@@ -251,7 +251,7 @@ echo "$port_vx" > "$HOME/agsbx/port_vx"
 elif [ -n "$port_vx" ]; then
 echo "$port_vx" > "$HOME/agsbx/port_vx"
 fi
-
+sskey=$(cat "$HOME/agsbx/sskey")
 port_vx=$(cat "$HOME/agsbx/port_vx")
 echo "Shadowsocks2022端口：$port_vx"
 cat >> "$HOME/agsbx/xr.json" <<EOF
@@ -1148,6 +1148,7 @@ private_key_x=$(cat "$HOME/agsbx/xrk/private_key" 2>/dev/null)
 public_key_x=$(cat "$HOME/agsbx/xrk/public_key" 2>/dev/null)
 short_id_x=$(cat "$HOME/agsbx/xrk/short_id" 2>/dev/null)
 enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
+sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
