@@ -245,7 +245,8 @@ fi
 if [ -n "$vxp" ]; then
 vxp=vxpt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$(openssl rand -base64 16)
+#sskey=$(openssl rand -base64 16)
+[ -z "$sskey" ] && sskey="$(openssl rand -base64 16)"
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
@@ -254,7 +255,7 @@ echo "$port_vx" > "$HOME/agsbx/port_vx"
 elif [ -n "$port_vx" ]; then
 echo "$port_vx" > "$HOME/agsbx/port_vx"
 fi
-
+sskey=$(cat "$HOME/agsbx/sskey")
 port_vx=$(cat "$HOME/agsbx/port_vx")
 echo "Shadowsocks2022端口：$port_vx"
 cat >> "$HOME/agsbx/xr.json" <<EOF
