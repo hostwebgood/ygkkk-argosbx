@@ -569,9 +569,9 @@ arp=arptargo
 fi
 if [ -n "$ssp" ]; then
 ssp=sspt
-if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$("$HOME/agsbx/sing-box" generate rand 16 --base64)
-echo "$sskey" > "$HOME/agsbx/sskey"
+if [ ! -e "$HOME/agsbx/sskey1" ]; then
+sskey1=$("$HOME/agsbx/sing-box" generate rand 16 --base64)
+echo "$sskey1" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
 port_ss=$(shuf -i 10000-65535 -n 1)
@@ -579,7 +579,7 @@ echo "$port_ss" > "$HOME/agsbx/port_ss"
 elif [ -n "$port_ss" ]; then
 echo "$port_ss" > "$HOME/agsbx/port_ss"
 fi
-sskey=$(cat "$HOME/agsbx/sskey")
+sskey1=$(cat "$HOME/agsbx/sskey")
 port_ss=$(cat "$HOME/agsbx/port_ss")
 echo "Shadowsocks-2022端口：$port_ss"
 cat >> "$HOME/agsbx/sb.json" <<EOF
@@ -589,7 +589,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "listen": "::",
             "listen_port": $port_ss,
             "method": "2022-blake3-aes-128-gcm",
-            "password": "$sskey"
+            "password": "$sskey1"
     },  
 EOF
 else
