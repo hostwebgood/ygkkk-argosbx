@@ -244,7 +244,10 @@ fi
 
 if [ -n "$vxp" ]; then
 vxp=vxpt
+if [ ! -e "$HOME/agsbx/sskey" ]; then
 sskey=$(openssl rand -base64 16)
+echo "$sskey" > "$HOME/agsbx/sskey"
+fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
 port_vx=$(shuf -i 10000-65535 -n 1)
 echo "$port_vx" > "$HOME/agsbx/port_vx"
