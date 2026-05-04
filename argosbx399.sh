@@ -244,10 +244,7 @@ fi
 
 if [ -n "$vxp" ]; then
 vxp=vxpt
-if [ ! -e "$HOME/agsbx/sskey" ]; then
 sskey=$(openssl rand -base64 16)
-
-fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
 port_vx=$(shuf -i 10000-65535 -n 1)
 echo "$port_vx" > "$HOME/agsbx/port_vx"
@@ -1162,7 +1159,7 @@ fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 hysteria2 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
-vl_xh_link="hysteria2://$uuid@$server_ip:$port_xh?security=tls&alpn=h3&insecure=1&sni=player.live-video.net&obfs=none#${sxname} Hysteria2"
+vl_xh_link="hysteria2://$uuid@$server_ip:$port_xh/?security=tls&alpn=h3&insecure=1&sni=player.live-video.net&obfs=none#${sxname} Hysteria2"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link"
 echo
@@ -1170,7 +1167,7 @@ fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey@$server_ip:$port_vx#${sxname} Shadowsocks" | base64 -w0)"
+vl_vx_link="ss://$(echo -n "2022-blake3-aes-128-gcm:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link"
 echo
