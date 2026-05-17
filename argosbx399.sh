@@ -40,7 +40,7 @@ export ippz=${ippz:-''}
 export warp=${warp:-''}
 export name=${name:-''}
 export oap=${oap:-''}
-v46url="https://ip.sb"
+v46url="https://icanhazip.com"
 agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx399.sh"
 showmode(){
 echo "Argosbx脚本一键SSH命令生器在线网址：https://yonggekkk.github.io/argosbx/"
