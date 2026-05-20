@@ -1179,12 +1179,11 @@ hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_xh" | awk '{
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-hyps="&mport=$cmhy2pt"
-
+hyps="&mport=$port_xh,$cmhy2pt"
 else
 hyps=
 fi
-vl_xh_link="hysteria2://$uuid@$server_ip:$port_xh/?security=tls&alpn=h3&insecure=1&allowInsecure=1$hyps&sni=player.live-video.net&obfs=none#${sxname} Hysteria2"
+vl_xh_link="hysteria2://$uuid@$server_ip:$port_xh/?peer=player.live-video.net&obfs=none&keepalive=17$hyps#${sxname} Hysteria2"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link"
 echo
