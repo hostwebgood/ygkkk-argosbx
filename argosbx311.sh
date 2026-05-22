@@ -1186,21 +1186,29 @@ FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey 
 else
 hyps=
 fi
-vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?$hyps&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2 \
-{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}} \
-{ \"type\": \"hysteria2\", \"tag\": \"${sxname} Hysteria2\", \"server\": \"$server_ip\", \"server_port\": $port_xh,\"server_ports\":[\"$cmhy21\"], \"hop_interval\": \"17s\", \"hop_interval_max\": \"30s\", \"password\": \"$uuid\", \"tls\": { \"enabled\": true, \"server_name\": \"player.live-video.net\", \"certificate_public_key_sha256\": [\"${FP_BASE64}\"], \"alpn\": [ \"h3\" ] } }" \
+vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?$hyps&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
+vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+vl_xh_link5="{ \"type\": \"hysteria2\", \"tag\": \"${sxname} Hysteria2\", \"server\": \"$server_ip\", \"server_port\": $port_xh,\"server_ports\":[\"$cmhy21\"], \"hop_interval\": \"17s\", \"hop_interval_max\": \"30s\", \"password\": \"$uuid\", \"tls\": { \"enabled\": true, \"server_name\": \"player.live-video.net\", \"certificate_public_key_sha256\": [\"${FP_BASE64}\"], \"alpn\": [ \"h3\" ] } }"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
+echo "$vl_xh_link3" >> "$HOME/agsbx/jh.txt"
+echo "$vl_xh_link5" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link"
+echo "$vl_xh_link3"
+echo "$vl_xh_link5"
 echo
 fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks \
-{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true } \
-{ \"type\": \"shadowsocks\", \"tag\": \"${sxname} Shadowsocks\", \"server\": \"$server_ip\", \"server_port\": $port_vx, \"method\": \"2022-blake3-chacha20-poly1305\", \"password\": \"$sskey\" }" \
+vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
+vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
+vl_vx_link5="{ \"type\": \"shadowsocks\", \"tag\": \"${sxname} Shadowsocks\", \"server\": \"$server_ip\", \"server_port\": $port_vx, \"method\": \"2022-blake3-chacha20-poly1305\", \"password\": \"$sskey\" }"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
+echo "$vl_vx_link3" >> "$HOME/agsbx/jh.txt"
+echo "$vl_vx_link5" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link"
+echo "$vl_vx_link3"
+echo "$vl_vx_link5"
 echo
 if [ -f "$HOME/agsbx/cdnym" ]; then
 echo "💣【 Vless-xhttp-ecn-cdn 】支持ENC加密，节点信息如下："
