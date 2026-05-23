@@ -1197,13 +1197,14 @@ echo "${mport}" > "$HOME/agsbx/mport"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
-sbhy2ports(){
+echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
+sbhy2ports_1(){
     cat <<EOF
   "server_ports": [ $sbhy2pt ],
 EOF
 }
 else
-echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
+sbhy2ports_1 > "$HOME/agsbx/sbhy2ports
 mport=
 fi
 vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
