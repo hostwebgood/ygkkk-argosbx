@@ -1259,7 +1259,7 @@ echo "$vl_vx_link"
 echo "$vl_vx_link3"
 echo "$vl_vx_link5"
 echo
-fi
+
 if [ -f "$HOME/agsbx/cdnym" ]; then
 echo "💣【 Vless-xhttp-ecn-cdn 】支持ENC加密，节点信息如下："
 echo "注：默认地址 yg数字.ygkkk.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
