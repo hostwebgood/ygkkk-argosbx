@@ -1167,10 +1167,11 @@ enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 cmhy21=$(cat "$HOME/agsbx/cmhy21" 2>/dev/null)
-hyps=$(cat "$HOME/agsbx/hyps" 2>/dev/null)
+mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
+sbhy2ports=$(cat "$HOME/agsbx/sbhy2ports" 2>/dev/null)
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
@@ -1186,13 +1187,13 @@ if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
 cmhy21=$(echo $hy2_ports)
-hyps="&mport=$port_xh,$cmhy2pt"
+mport="$port_xh,$cmhy2pt"
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
 echo "${cmhy21}" > "$HOME/agsbx/cmhy21"
-echo "${hyps}" > "$HOME/agsbx/hyps"
+echo "${mport}" > "$HOME/agsbx/mport"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
@@ -1201,12 +1202,14 @@ sbhy2ports(){
   "server_ports": [ $sbhy2pt ],
 EOF
 }
+echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
 else
-hyps=
+mport=
 fi
-vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?$hyps&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
+vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 vl_xh_link5="
+    
     {
         "type": "hysteria2",
         "tag": "${sxname} Hysteria2",
@@ -1240,6 +1243,7 @@ port_vx=$(cat "$HOME/agsbx/port_vx")
 vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
 vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 vl_vx_link5="
+    
     {
        "type": "shadowsocks",
        "tag": "${sxname} Shadowsocks",
