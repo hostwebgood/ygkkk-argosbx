@@ -1206,9 +1206,9 @@ echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
 else
 mport=
 fi
-vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
+vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
-vl_xh_link5="
+vl_xh_link5="\
     
     {
         "type": "hysteria2",
@@ -1228,7 +1228,7 @@ $(sbhy2ports 2>/dev/null)
                 "h3"
             ]
         }
-    },"
+    },\"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link3" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link5" >> "$HOME/agsbx/jh.txt"
@@ -1242,7 +1242,7 @@ echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
 vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
 vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
-vl_vx_link5="
+vl_vx_link5="\
     
     {
        "type": "shadowsocks",
@@ -1251,7 +1251,7 @@ vl_vx_link5="
        "server_port": $port_vx,
        "method": "2022-blake3-chacha20-poly1305",
        "password": "$sskey",
-     },"
+     },\"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link3" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link5" >> "$HOME/agsbx/jh.txt"
