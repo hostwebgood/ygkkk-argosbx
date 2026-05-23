@@ -1171,7 +1171,7 @@ mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
-sbhy2ports=$(cat "$HOME/agsbx/sbhy2ports" 2>/dev/null)
+
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
@@ -1197,15 +1197,9 @@ echo "${mport}" > "$HOME/agsbx/mport"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
-echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
-sbhy2ports_1(){
-    cat <<EOF
-  "server_ports": [ $sbhy2pt ],
-EOF
-}
-else
-sbhy2ports_1 > "$HOME/agsbx/sbhy2ports
-mport=
+
+
+
 fi
 vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
@@ -1216,7 +1210,7 @@ vl_xh_link5="\
         "tag": "${sxname} Hysteria2",
         "server": "$server_ip",
         "server_port": $port_xh,
-$(sbhy2ports 2>/dev/null)
+        "server_ports": [ $sbhy2pt ],
         "password": "$uuid",
         "tls": {
             "enabled": true,
