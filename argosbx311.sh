@@ -1184,6 +1184,12 @@ hyps="&mport=$port_xh,$cmhy2pt"
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
+echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
+echo "${cmhy21}" > "$HOME/agsbx/cmhy21"
+echo "${hyps}" > "$HOME/agsbx/hyps"
+echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
+echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
+echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
 sbhy2ports(){
     cat <<EOF
   "server_ports": [ $sbhy2pt ],
