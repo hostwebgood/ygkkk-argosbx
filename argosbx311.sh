@@ -1202,8 +1202,8 @@ sbhy2ports(){
   "server_ports": [ $sbhy2pt ],
 EOF
 }
-echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
 else
+echo "${sbhy2ports}" > "$HOME/agsbx/sbhy2ports"
 mport=
 fi
 vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
@@ -1259,7 +1259,6 @@ echo "$vl_vx_link"
 echo "$vl_vx_link3"
 echo "$vl_vx_link5"
 echo
-
 if [ -f "$HOME/agsbx/cdnym" ]; then
 echo "💣【 Vless-xhttp-ecn-cdn 】支持ENC加密，节点信息如下："
 echo "注：默认地址 yg数字.ygkkk.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
@@ -1268,7 +1267,7 @@ echo "$vl_vx_cdn_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_cdn_link"
 echo
 fi
-
+fi
 if grep vless-ws "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Vless-ws-enc 】支持ENC加密，节点信息如下："
 port_vw=$(cat "$HOME/agsbx/port_vw")
