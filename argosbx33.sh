@@ -1274,7 +1274,7 @@ ss_link5="
       \"server\": \"$server_ip\",
       \"server_port\": \"$port_ss\",
       \"method\": \"2022-blake3-chacha20-poly1305\",
-      \"password\": \"$sskey\"
+      \"password\": \"$sskey\",
     },"
 echo "$ss_link" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link3" >> "$HOME/agsbx/jh.txt"
