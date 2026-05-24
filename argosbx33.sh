@@ -634,7 +634,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "listen": "::",
             "listen_port": $port_ss,
             "method": "2022-blake3-chacha20-poly1305",
-            "password": "$sskey"
+            "password": "$sskey",
             "multiplex":{
                 "enabled":true,
                 "padding":true,
