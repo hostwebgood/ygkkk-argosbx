@@ -1237,14 +1237,14 @@ port_vx=$(cat "$HOME/agsbx/port_vx")
 vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
 vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 vl_vx_link5="
-    {
-      \"type\": \"shadowsocks\",
-      \"tag\": \"${sxname} Shadowsocks\",
-      \"server\": \"$server_ip\",
-      \"server_port\": \"$port_vx\",
-      \"method\": \"2022-blake3-chacha20-poly1305\",
-      \"password\": \"$sskey\"
-    },"
+  {
+    \"type\": \"shadowsocks\",
+    \"tag\": \"${sxname} Shadowsocks\",
+    \"server\": \"$server_ip\",
+    \"server_port\": \"$port_vx\",
+    \"method\": \"2022-blake3-chacha20-poly1305\",
+    \"password\": \"$sskey\"
+  },"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link3" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link5" >> "$HOME/agsbx/jh.txt"
