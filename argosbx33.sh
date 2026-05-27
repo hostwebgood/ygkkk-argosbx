@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "当前版本：V26.5.10,Fork V26.5.25"
+echo "当前版本：Forked from V26.5.10 Mod V26.5.27"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
@@ -1208,7 +1208,6 @@ public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
-cmhy21=$(cat "$HOME/agsbx/cmhy21" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
@@ -1268,14 +1267,14 @@ port_ss=$(cat "$HOME/agsbx/port_ss")
 ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_ss#${sxname} Shadowsocks"
 ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 ss_link5="
-    {
-      \"type\": \"shadowsocks\",
-      \"tag\": \"${sxname} Shadowsocks\",
-      \"server\": \"$server_ip\",
-      \"server_port\": \"$port_ss\",
-      \"method\": \"2022-blake3-chacha20-poly1305\",
-      \"password\": \"$sskey\",
-    },"
+  {
+    \"type\": \"shadowsocks\",
+    \"tag\": \"${sxname} Shadowsocks\",
+    \"server\": \"$server_ip\",
+    \"server_port\": \"$port_ss\",
+    \"method\": \"2022-blake3-chacha20-poly1305\",
+    \"password\": \"$sskey\",
+  },"
 echo "$ss_link" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link3" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link5" >> "$HOME/agsbx/jh.txt"
@@ -1323,13 +1322,11 @@ hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_hy2" | awk '
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-cmhy21=$(echo $hy2_ports)
 mport="$port_hy2,$cmhy2pt"
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
-echo "${cmhy21}" > "$HOME/agsbx/cmhy21"
 echo "${mport}" > "$HOME/agsbx/mport"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
@@ -1338,7 +1335,29 @@ fi
 hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
 hy2_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
-hy2_link5="{ \"type\": \"hysteria2\", \"tag\": \"${sxname} Hysteria2\", \"server\": \"$server_ip\", \"server_port\": \"$port_hy2\", \"server_ports\":[\"$sbhy2pt\"], \"hop_interval\": \"17s\", \"hop_interval_max\": \"30s\", \"password\": \"$uuid\", \"obfs\": \"salamander\", \"obfs-password\": \"$uuid\", \"tls\": { \"enabled\": true, \"server_name\": \"player.live-video.net\", \"certificate_public_key_sha256\": [\"${FP_BASE64}\"], \"alpn\": [ \"h3\" ] } },"
+hy2_link5="
+  {
+    \"type\": \"hysteria2\",
+    \"tag\": \"${sxname} Hysteria2\"
+    \"server\": \"$server_ip\",
+    \"server_port\": \"$port_xh\",
+    \"server_ports\":[
+      \"$sbhy2pt\"
+     ],
+    \"hop_interval\": \"17s\",
+    \"hop_interval_max\": \"30s\", 
+    \"password\": \"$uuid\",
+    \"tls\": {
+    \"enabled\": true,
+    \"server_name\": \"player.live-video.net\",
+    \"certificate_public_key_sha256\": [
+      \"${FP_BASE64}\"
+     ],
+    \"alpn\": [
+      \"h3\"
+     ]
+    }
+  },"
 echo "$hy2_link" >> "$HOME/agsbx/jh.txt"
 echo "$hy2_link1" >> "$HOME/agsbx/jh.txt"
 echo "$hy2_link3" >> "$HOME/agsbx/jh.txt"
