@@ -1184,7 +1184,6 @@ hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_xh" | awk '{
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-cmhy21=$(echo $hy2_ports)
 mport="$port_xh,$cmhy2pt"
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
@@ -1199,16 +1198,16 @@ vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player
 vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 vl_xh_link5="
-  { 
+  {
     \"type\": \"hysteria2\",
-    \"tag\": \"${sxname} Hysteria2\" 
+    \"tag\": \"${sxname} Hysteria2\"
     \"server\": \"$server_ip\",
-    \"server_port\": \"$port_xh\", 
+    \"server_port\": \"$port_xh\",
     \"server_ports\":[
       \"$sbhy2pt\"
-     ], 
+     ],
     \"hop_interval\": \"17s\",
-    \"hop_interval_max\": \"30s\", 
+    \"hop_interval_max\": \"30s\",
     \"password\": \"$uuid\",
     \"tls\": {
     \"enabled\": true,
