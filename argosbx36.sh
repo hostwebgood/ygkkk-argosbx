@@ -178,15 +178,7 @@ else
 fi
 }
 upsingbox(){
-API_RESPONSE=$(wget --no-check-certificate --server-response --tries=2 --timeout=3 -qO- "https://api.github.com/repos/SagerNet/sing-box/releases" 2>&1 | grep -E '^[ ]+HTTP/|tag_name')
-    if grep -q 'HTTP.* 200' <<< "$API_RESPONSE"; then
-      local VERSION_LATEST=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -Vr | sed -n '1p')
-      local RESULT_VERSION=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION_LATEST" '$0 ~ var {print $5; exit}')
-    else
-      local RESULT_VERSION="$DEFAULT_NEWEST_VERSION"
-    fi
-  fi
-  echo "$RESULT_VERSION"
+ONLINE=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*" '$0 ~ var {print $5; exit}')
 
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$ONLINE/sing-box-$ONLINE-linux-$SING_BOX_ARCH.tar.gz
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
