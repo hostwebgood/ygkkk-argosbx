@@ -161,37 +161,47 @@ fi
 upxray(){
 wget --no-check-certificate -O $HOME/agsbx/Xray.zip https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -o $HOME/agsbx/Xray.zip xray -d /$HOME/agsbx
 rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
-if [[ -f '/$HOME/agsbx/xray' ]]; then
-chown root:root /$HOME/agsbx/xray
-chmod +x "$HOME/agsbx/xray"
-sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-blue "已安装 Xray 内核，当前版本：$sbcore"
-xrnh=$(/$HOME/agsbx/xray version 2>/dev/null | awk '/^Xray/{print $2}' 2>/dev/null | cut -d '.' -f 1,2)
+if [[ -f "$HOME/agsbx/xray" ]]; then
+    # 修正路径并统一加双引号防止空格引发错误
+    chown root:root "$HOME/agsbx/xray"
+    chmod +x "$HOME/agsbx/xray"
+    
+    # 提取版本号
+    sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
+    blue "已安装 Xray 内核，当前版本：$sbcore"
+    
+    xrnh=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}' | cut -d '.' -f 1,2)
 else
-red "下载 xray 内核不完整，请再安装一次" && exit
-fi
-else
-red "下载 xray 内核不完整，请再安装一次，并检测VPS的网络是否可以访问Github" && exit
+    # 统一报错提示，并确保 exit 能够正确执行
+    red "下载 xray 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    exit 1
 fi
 }
 upsingbox(){
 sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 sbname="sing-box-$sbcore-linux-$cpu"
 curl -L -o /$HOME/agsbx/sing-box.tar.gz  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
-if [[ -f '/$HOME/agsbx/sing-box.tar.gz' ]]; then
-tar xzf /$HOME/agsbx/sing-box.tar.gz -C /$HOME/agsbx
-mv /$HOME/agsbx/$sbname/sing-box /$HOME/agsbx
-rm -rf /$HOME/agsbx/{sing-box.tar.gz,$sbname}
-if [[ -f '/$HOME/agsbx/sing-box' ]]; then
-chown root:root /$HOME/agsbx/sing-box
-chmod +x /$HOME/agsbx/sing-box
-blue "已安装 Sing-box 内核，当前版本：$(/$HOME/agsbx/sing-box version | awk '/version/{print $NF}')"
-sbnh=$(/$HOME/agsbx/sing-box version 2>/dev/null | awk '/version/{print $NF}' 2>/dev/null | cut -d '.' -f 1,2)
+if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
+    tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
+    mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx/"
+    rm -rf "$HOME/agsbx/sing-box.tar.gz" "$HOME/agsbx/$sbname"
+    
+    if [[ -f "$HOME/agsbx/sing-box" ]]; then
+        chown root:root "$HOME/agsbx/sing-box"
+        chmod +x "$HOME/agsbx/sing-box"
+        
+        # 2. 优化 sing-box 版本号提取逻辑，确保只抓取标准版本号（如 1.8.0）
+        sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
+        blue "已安装 Sing-box 内核，当前版本：$sbcore"
+        
+        sbnh=$(echo "$sbcore" | cut -d '.' -f 1,2)
+    else
+        red "下载 Sing-box 内核不完整，请再安装一次"
+        exit 1
+    fi
 else
-red "下载 Sing-box 内核不完整，请再安装一次" && exit
-fi
-else
-red "下载 Sing-box 内核不完整，请再安装一次，并检测VPS的网络是否可以访问Github" && exit
+    red "下载 Sing-box 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    exit 1
 fi
 }
 insuuid(){
