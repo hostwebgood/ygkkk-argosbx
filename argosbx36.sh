@@ -76,7 +76,7 @@ mkdir -p "$HOME/agsbx"
 if [ ! -f sbx_update ]; then
 echo "安装依赖中，请稍等10秒……"
 if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache bash unzip busybox-extras gcompat libc6-compat iptables procps gzip tar openssl virt-what >/dev/null 2>&1
+apk update >/dev/null 2>&1 && apk add --no-cache bash unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar openssl virt-what >/dev/null 2>&1
 elif command -v apt >/dev/null 2>&1; then
 export DEBIAN_FRONTEND=noninteractive
 printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
