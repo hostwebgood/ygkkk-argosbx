@@ -71,8 +71,6 @@ arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
 amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 *) echo "目前脚本不支持$(uname -m)架构" && exit
 esac
-if [ "$1" != "del" ]; then
-mkdir -p "$HOME/agsbx"
 if [ ! -f sbx_update ]; then
 echo "安装依赖中，请稍等10秒……"
 if command -v apk >/dev/null 2>&1; then
@@ -159,7 +157,7 @@ case "$warp" in *x6*) xryx='ForceIPv6' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='Fo
 fi
 }
 upxray(){
-wget --no-check-certificate -O $HOME/agsbx/Xray.zip https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -o $HOME/agsbx/Xray.zip xray -d /$HOME/agsbx
+curl -L -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"  -# --retry 2 https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip" xray -d "$HOME/agsbx"
 rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
 if [[ -f "$HOME/agsbx/xray" ]]; then
     # 修正路径并统一加双引号防止空格引发错误
