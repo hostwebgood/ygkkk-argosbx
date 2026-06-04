@@ -178,9 +178,10 @@ else
 fi
 }
 upsingbox(){
+VERSION_LATEST=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -Vr | sed -n '1p')
 sbcore=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION_LATEST" '$0 ~ var {print $5; exit}')
 sbname="sing-box-$sbcore-linux-$cpu"
-wget --no-check-certificate -O $HOME/agsbx/sing-box.tar.gz --tries=2 https://github.com/SagerNet/sing-box/releases/latest/download/$sbname.tar.gz
+wget --no-check-certificate -O $HOME/agsbx/sing-box.tar.gz --tries=2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx/"
