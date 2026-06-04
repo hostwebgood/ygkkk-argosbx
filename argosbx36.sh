@@ -73,6 +73,7 @@ amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 esac
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
+mkdir -p "sbx_update"
 if [ ! -f sbx_update ]; then
 echo "安装依赖中，请稍等10秒……"
 if command -v apk >/dev/null 2>&1; then
@@ -178,9 +179,7 @@ else
 fi
 }
 upsingbox(){
-ONLINE=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*" '$0 ~ var {print $5; exit}')
-
-curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$ONLINE/sing-box-$ONLINE-linux-$SING_BOX_ARCH.tar.gz
+curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v1.13.13/sing-box-1.13.13-linux-$SING_BOX_ARCH.tar.gz
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx/"
