@@ -73,7 +73,6 @@ amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 esac
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
-mkdir -p "sbx_update"
 if [ ! -f sbx_update ]; then
 echo "安装依赖中，请稍等10秒……"
 if command -v apk >/dev/null 2>&1; then
@@ -181,6 +180,7 @@ fi
 upsingbox(){
 #sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v1.13.13/sing-box-1.13.13-linux-$SING_BOX_ARCH.tar.gz
+sbname="sing-box-1.13.13-linux-$SING_BOX_ARCH"
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
@@ -1538,7 +1538,7 @@ fi
 
 if [ "$1" = "del" ]; then
 cleandel
-rm -rf "$HOME/agsbx" "$HOME/agsb"
+rm -rf "$HOME/agsbx" "$HOME/agsb" "$HOME/sbx_update"
 echo "卸载完成"
 echo "欢迎继续使用甬哥侃侃侃ygkkk的Argosbx一键无交互小钢炮脚本💣" && sleep 2
 echo
