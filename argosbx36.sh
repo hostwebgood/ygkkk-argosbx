@@ -168,19 +168,19 @@ if [[ -f "$HOME/agsbx/xray" ]]; then
     
     # 提取版本号
     sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-    blue "已安装 Xray 内核，当前版本：$sbcore"
+    echo "已安装 Xray 内核，当前版本：$sbcore"
     
     xrnh=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}' | cut -d '.' -f 1,2)
 else
     # 统一报错提示，并确保 exit 能够正确执行
-    red "下载 xray 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    echo "下载 xray 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
     exit 1
 fi
 }
 upsingbox(){
-sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
+sbcore=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION_LATEST" '$0 ~ var {print $5; exit}')
 sbname="sing-box-$sbcore-linux-$cpu"
-curl -L -o /$HOME/agsbx/sing-box.tar.gz  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
+wget --no-check-certificate -O $HOME/agsbx/sing-box.tar.gz --tries=2 https://github.com/SagerNet/sing-box/releases/latest/download/$sbname.tar.gz
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx/"
@@ -192,15 +192,15 @@ if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
         
         # 2. 优化 sing-box 版本号提取逻辑，确保只抓取标准版本号（如 1.8.0）
         sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
-        blue "已安装 Sing-box 内核，当前版本：$sbcore"
+        echo "已安装 Sing-box 内核，当前版本：$sbcore"
         
         sbnh=$(echo "$sbcore" | cut -d '.' -f 1,2)
     else
-        red "下载 Sing-box 内核不完整，请再安装一次"
+        echo "下载 Sing-box 内核不完整，请再安装一次"
         exit 1
     fi
 else
-    red "下载 Sing-box 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    echo "下载 Sing-box 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
     exit 1
 fi
 }
