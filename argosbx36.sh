@@ -179,10 +179,11 @@ else
 fi
 }
 upsingbox(){
-curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v1.13.13/sing-box-1.13.13-linux-$SING_BOX_ARCH.tar.gz
+sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
+curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/sing-box-$sbcore-linux-$SING_BOX_ARCH.tar.gz
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
-    mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx/"
+    mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
     rm -rf "$HOME/agsbx/sing-box.tar.gz" "$HOME/agsbx/$sbname"
     
     if [[ -f "$HOME/agsbx/sing-box" ]]; then
