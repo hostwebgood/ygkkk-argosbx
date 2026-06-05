@@ -174,13 +174,12 @@ fi
 upsingbox(){
 sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/sing-box-$sbcore-linux-$SING_BOX_ARCH.tar.gz
-sbname="sing-box-1.13.13-linux-$SING_BOX_ARCH"
+sbname="sing-box-$sbcore-linux-$SING_BOX_ARCH"
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
     rm -rf "$HOME/agsbx/sing-box.tar.gz" "$HOME/agsbx/$sbname"
     if [[ -f "$HOME/agsbx/sing-box" ]]; then
-        chown root:root "$HOME/agsbx/sing-box"
         chmod +x "$HOME/agsbx/sing-box"
         sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
         echo "已安装 Sing-box 内核，当前版本：$sbcore"
