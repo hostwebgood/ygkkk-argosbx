@@ -159,42 +159,31 @@ case "$warp" in *x6*) xryx='ForceIPv6' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='Fo
 fi
 }
 upxray(){
-curl -L -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"  -# --retry 2 https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip" xray -d "$HOME/agsbx"
+curl -L -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"  -# --retry 2 https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -qo "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip" xray -d "$HOME/agsbx"
 rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
 if [[ -f "$HOME/agsbx/xray" ]]; then
-    # 修正路径并统一加双引号防止空格引发错误
     chown root:root "$HOME/agsbx/xray"
     chmod +x "$HOME/agsbx/xray"
-    
-    # 提取版本号
     sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
     echo "已安装 Xray 内核，当前版本：$sbcore"
-    
-    xrnh=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}' | cut -d '.' -f 1,2)
 else
-    # 统一报错提示，并确保 exit 能够正确执行
     echo "下载 xray 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
     exit 1
 fi
 }
 upsingbox(){
-#sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
-curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v1.13.13/sing-box-1.13.13-linux-$SING_BOX_ARCH.tar.gz
+sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
+curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/sing-box-$sbcore-linux-$SING_BOX_ARCH.tar.gz
 sbname="sing-box-1.13.13-linux-$SING_BOX_ARCH"
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
     rm -rf "$HOME/agsbx/sing-box.tar.gz" "$HOME/agsbx/$sbname"
-    
     if [[ -f "$HOME/agsbx/sing-box" ]]; then
         chown root:root "$HOME/agsbx/sing-box"
         chmod +x "$HOME/agsbx/sing-box"
-        
-        # 2. 优化 sing-box 版本号提取逻辑，确保只抓取标准版本号（如 1.8.0）
         sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
         echo "已安装 Sing-box 内核，当前版本：$sbcore"
-        
-        sbnh=$(echo "$sbcore" | cut -d '.' -f 1,2)
     else
         echo "下载 Sing-box 内核不完整，请再安装一次"
         exit 1
@@ -1601,7 +1590,7 @@ if ! find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -
 for P in /proc/[0-9]*; do if [ -L "$P/exe" ]; then TARGET=$(readlink -f "$P/exe" 2>/dev/null); if echo "$TARGET" | grep -qE '/agsbx/c|/agsbx/s|/agsbx/x'; then PID=$(basename "$P"); kill "$PID" 2>/dev/null && echo "Killed $PID ($TARGET)" || echo "Could not kill $PID ($TARGET)"; fi; fi; done
 kill -15 $(pgrep -f 'agsbx/s' 2>/dev/null) $(pgrep -f 'agsbx/c' 2>/dev/null) $(pgrep -f 'agsbx/x' 2>/dev/null) >/dev/null 2>&1
 if [ -z "$( (command -v curl >/dev/null 2>&1 && curl -s4m5 -k "$v46url" 2>/dev/null) || (command -v wget >/dev/null 2>&1 && timeout 3 wget -4 -qO- --tries=2 "$v46url" 2>/dev/null) )" ]; then
-echo "IPv6网络环境，自行添加NAT64或者使用WARP！"
+echo "纯IPv6网络环境，可以考虑自行添加NAT64或者使用WARP。"
 fi
 if [ -n "$( (command -v curl >/dev/null 2>&1 && curl -s6m5 -k "$v46url" 2>/dev/null) || (command -v wget >/dev/null 2>&1 && timeout 3 wget -6 -qO- --tries=2 "$v46url" 2>/dev/null) )" ]; then
 sendip="2606:4700:d0::a29f:c001"
