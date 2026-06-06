@@ -226,7 +226,7 @@ echo "Reality域名：$ym_vl_re"
 if [ ! -e "$HOME/agsbx/xrk/private_key" ]; then
 key_pair=$("$HOME/agsbx/xray" x25519)
 private_key=$(echo "$key_pair" | grep "PrivateKey" | awk '{print $NF}')
-public_key=$(echo "$key_pair" | grep "Publickey" | awk '{print $NF}')
+public_key=$(echo "$key_pair" | grep "Public" | awk '{print $NF}')
 short_id=$(date +%s%N | sha256sum | cut -c 1-8)
 echo "$private_key" > "$HOME/agsbx/xrk/private_key"
 echo "$public_key" > "$HOME/agsbx/xrk/public_key"
