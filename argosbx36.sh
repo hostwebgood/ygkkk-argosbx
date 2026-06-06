@@ -185,6 +185,7 @@ if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     else
         echo "下载 Sing-box 内核失败，请再安装一次，并检查VPS能否访问GitHub"
         exit 1
+    fi
 fi
 }
 insuuid(){
