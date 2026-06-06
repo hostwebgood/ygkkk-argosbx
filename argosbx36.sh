@@ -820,8 +820,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
               "0.0.0.0/0",
               "::/0"
             ],
-            "endpoint": "${xendip}"
-            "port": "2408",
+            "endpoint": "[${xendip}]:2408"
           }
         ],
         "reserved": ${res}
@@ -1523,7 +1522,7 @@ fi
 
 if [ "$1" = "del" ]; then
 cleandel
-rm -rf "$HOME/agsbx" "$HOME/agsb" "$HOME/sbx_update"
+rm -rf "$HOME/agsbx" "$HOME/agsb" "$HOME/sbx_update" "$HOME/bin/agsbx"
 echo "卸载完成！" && sleep 2
 echo
 showmode
