@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "当前版本：Forked from V26.5.10 Mod V26.6.4"
+echo "当前版本：Forked from V26.5.10 Mod V26.6.6"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
@@ -69,14 +69,14 @@ case $(uname -m) in
 armv7l) cpu=armv7 XRAY_ARCH=arm32-v7a SING_BOX_ARCH=armv7;;
 arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
 amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
-*) echo "目前脚本不支持$(uname -m)架构" && exit
+*) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
 esac
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
 if [ ! -f sbx_update ]; then
-echo "安装依赖中，请稍等10秒……"
+echo "依赖安装中，请稍等……"
 if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache bash unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar openssl virt-what >/dev/null 2>&1
+apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar openssl virt-what >/dev/null 2>&1
 elif command -v apt >/dev/null 2>&1; then
 export DEBIAN_FRONTEND=noninteractive
 printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
@@ -106,12 +106,12 @@ if [ -n "$name" ]; then
 sxname=$name
 echo "$sxname" > "$HOME/agsbx/name"
 echo
-echo "所有节点名称前缀：$name"
+echo "所有节点前缀：$name"
 fi
 v4v6
 if echo "$v6" | grep -q '^2a09' || echo "$v4" | grep -q '^104.28'; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
-echo; echo "请注意：你已安装了warp"
+echo; echo "请注意：你已安装了WARP"
 else
 if [ "$wap" != yes ]; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
@@ -162,19 +162,18 @@ upxray(){
 curl -L -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"  -# --retry 2 https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -qo "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip" xray -d "$HOME/agsbx"
 rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
 if [[ -f "$HOME/agsbx/xray" ]]; then
-    chown root:root "$HOME/agsbx/xray"
     chmod +x "$HOME/agsbx/xray"
-    sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-    echo "已安装 Xray 内核，当前版本：$sbcore"
+    xrv=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
+    echo "已安装 Xray 内核，当前版本：$xrv"
 else
-    echo "下载 xray 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    echo "下载 xray 内核失败，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
     exit 1
 fi
 }
 upsingbox(){
-sbcore=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
+sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/sing-box-$sbcore-linux-$SING_BOX_ARCH.tar.gz
-sbname="sing-box-$sbcore-linux-$SING_BOX_ARCH"
+sbname="sing-box-$sbv-linux-$SING_BOX_ARCH"
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
     mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
@@ -184,12 +183,8 @@ if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
         sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
         echo "已安装 Sing-box 内核，当前版本：$sbcore"
     else
-        echo "下载 Sing-box 内核不完整，请再安装一次"
+        echo "下载 Sing-box 内核失败，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
         exit 1
-    fi
-else
-    echo "下载 Sing-box 内核不完整，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
-    exit 1
 fi
 }
 insuuid(){
@@ -230,7 +225,7 @@ echo "Reality域名：$ym_vl_re"
 if [ ! -e "$HOME/agsbx/xrk/private_key" ]; then
 key_pair=$("$HOME/agsbx/xray" x25519)
 private_key=$(echo "$key_pair" | grep "PrivateKey" | awk '{print $NF}')
-public_key=$(echo "$key_pair" | grep "Public" | awk '{print $NF}')
+public_key=$(echo "$key_pair" | grep "Publickey" | awk '{print $NF}')
 short_id=$(date +%s%N | sha256sum | cut -c 1-8)
 echo "$private_key" > "$HOME/agsbx/xrk/private_key"
 echo "$public_key" > "$HOME/agsbx/xrk/public_key"
@@ -682,7 +677,7 @@ port_vm_ws=$(cat "$HOME/agsbx/port_vm_ws")
 echo "Vmess-ws端口：$port_vm_ws"
 if [ -n "$cdnym" ]; then
 echo "$cdnym" > "$HOME/agsbx/cdnym"
-echo "80系CDN或者回源CDN的host域名 (确保IP已解析在CF域名)：$cdnym"
+echo "80系CDN或回源CDN的Host域名 (确保IP已解析到在Cloudflare托管的域名上)：$cdnym"
 fi
 if [ -e "$HOME/agsbx/xr.json" ]; then
 cat >> "$HOME/agsbx/xr.json" <<EOF
@@ -824,7 +819,8 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
               "0.0.0.0/0",
               "::/0"
             ],
-            "endpoint": "${xendip}:2408"
+            "endpoint": "${xendip}"
+            "port": "2408",
           }
         ],
         "reserved": ${res}
@@ -1019,7 +1015,7 @@ echo
 echo "=========启用Cloudflared-argo内核========="
 if [ ! -e "$HOME/agsbx/cloudflared" ]; then
 argocore=$({ command -v curl >/dev/null 2>&1 && curl -Ls https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared || wget -qO- https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared; } | grep -Eo '"[0-9.]+"' | sed -n 1p | tr -d '",')
-echo "下载Cloudflared-argo最新正式版内核：$argocore"
+echo "下载Cloudflared-argo正式版内核：$argocore"
 url="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu"; out="$HOME/agsbx/cloudflared"; (command -v curl>/dev/null 2>&1 && curl -Lo "$out" -# --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -O "$out" --tries=2 "$url")
 chmod +x "$HOME/agsbx/cloudflared"
 fi
@@ -1078,7 +1074,7 @@ fi
 if [ -n "${argodomain}" ]; then
 echo "Argo$argoname隧道申请成功"
 else
-echo "Argo$argoname隧道申请失败，请稍后再试"
+echo "Argo$argoname隧道申请失败，请重试"
 fi
 fi
 sleep 5
@@ -1179,10 +1175,10 @@ fi
 echo
 argosbxstatus
 echo
-echo "=========当前服务器本地IP情况========="
-echo "本地IPV4地址：$vps_ipv4 $w4"
-echo "本地IPV6地址：$vps_ipv6 $w6"
-echo "服务器地区：$location"
+echo "=========当前服务器IP情况========="
+echo "IPV4：$vps_ipv4 $w4"
+echo "IPV6：$vps_ipv6 $w6"
+echo "地区：$location"
 echo
 sleep 2
 if [ "$ippz" = "4" ]; then
@@ -1211,10 +1207,10 @@ sxname=$(cat "$HOME/agsbx/name" 2>/dev/null)
 xvvmcdnym=$(cat "$HOME/agsbx/cdnym" 2>/dev/null)
 echo "*********************************************************"
 echo "*********************************************************"
-echo "Argosbx脚本输出节点配置如下："
+echo "Argosbx脚本输出的节点配置如下："
 echo
 case "$server_ip" in
-104.28*|\[2a09*) echo "检测到有WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请把客户端地址上的WARP的IP手动更换为VPS本地IPV4或者IPV6地址" && sleep 3 ;;
+104.28*|\[2a09*) echo "检测到使用WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请将客户端地址上的WARP的IP手动更换为VPS的IPV4或IPV6" && sleep 3 ;;
 esac
 echo
 ym_vl_re=$(cat "$HOME/agsbx/ym_vl_re" 2>/dev/null)
@@ -1279,7 +1275,7 @@ fi
 if grep reality-vision "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Vless-tcp-reality-vision 】节点信息如下："
 port_vl_re=$(cat "$HOME/agsbx/port_vl_re")
-vl_link="vless://$uuid@$server_ip:$port_vl_re?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$ym_vl_re&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=tcp&headerType=none#${sxname} Reality-vision"
+vl_link="vless://$uuid@$server_ip:$port_vl_re?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$ym_vl_re&fp=chrome&pbk=$public_key_x&sid=$short_id_x&type=tcp&headerType=none#${sxname} Reality-Vision"
 echo "$vl_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_link"
 echo
@@ -1455,10 +1451,10 @@ echo "Argo隧道端口正在使用$vlvm-ws主协议端口：$(cat $HOME/agsbx/ar
 Argo域名：$argodomain
 $nametn
 
-1、💣443端口的$vlvm-ws-tls-argo节点(优选IP与443系端口随便换)
+1、💣443端口的$vlvm-ws-tls-argo节点(可自行更换优选IP与443系端口)
 ${vmatls_link1}${vwatls_link1}
 
-2、💣80端口的$vlvm-ws-argo节点(优选IP与80系端口随便换)
+2、💣80端口的$vlvm-ws-argo节点(可自行更换优选IP与80系端口)
 ${vma_link7}${vwa_link2}
 "
 )
@@ -1469,7 +1465,7 @@ echo
 echo "---------------------------------------------------------"
 echo "聚合节点信息，请进入 $HOME/agsbx/jh.txt 文件目录查看或者运行 cat $HOME/agsbx/jh.txt 查看"
 echo "========================================================="
-echo "相关快捷方式如下：(首次安装成功后需重连SSH，agsbx快捷方式才可生效)"
+echo "相关快捷方式如下：(提示：首次安装成功后需重连SSH，agsbx快捷方式方可生效！)"
 showmode
 }
 cleandel(){
@@ -1527,15 +1523,14 @@ fi
 if [ "$1" = "del" ]; then
 cleandel
 rm -rf "$HOME/agsbx" "$HOME/agsb" "$HOME/sbx_update"
-echo "卸载完成"
-echo "欢迎继续使用甬哥侃侃侃ygkkk的Argosbx一键无交互小钢炮脚本💣" && sleep 2
+echo "卸载完成！" && sleep 2
 echo
 showmode
 exit
 elif [ "$1" = "rep" ]; then
 cleandel
 rm -rf "$HOME/agsbx"/{sb.json,xr.json,sbargoym.log,sbargotoken.log,argo.log,argoport.log,cdnym,name}
-echo "Argosbx重置协议完成，开始更新相关协议变量……" && sleep 2
+echo "重置Argosbx脚本协议已完成，开始更新相关配置……" && sleep 2
 echo
 elif [ "$1" = "list" ]; then
 cip
@@ -1543,12 +1538,12 @@ exit
 elif [ "$1" = "upx" ]; then
 for P in /proc/[0-9]*; do [ -L "$P/exe" ] || continue; TARGET=$(readlink -f "$P/exe" 2>/dev/null) || continue; case "$TARGET" in *"/agsbx/x"*) kill "$(basename "$P")" 2>/dev/null ;; esac; done
 kill -15 $(pgrep -f 'agsbx/x' 2>/dev/null) >/dev/null 2>&1
-upxray && xrestart && echo "Xray内核更新完成" && sleep 2 && cip
+upxray && xrestart && echo "Xray内核更新完成！" && sleep 2 && cip
 exit
 elif [ "$1" = "ups" ]; then
 for P in /proc/[0-9]*; do [ -L "$P/exe" ] || continue; TARGET=$(readlink -f "$P/exe" 2>/dev/null) || continue; case "$TARGET" in *"/agsbx/s"*) kill "$(basename "$P")" 2>/dev/null ;; esac; done
 kill -15 $(pgrep -f 'agsbx/s' 2>/dev/null) >/dev/null 2>&1
-upsingbox && sbrestart && echo "Sing-box内核更新完成" && sleep 2 && cip
+upsingbox && sbrestart && echo "Sing-box内核更新完成！" && sleep 2 && cip
 exit
 elif [ "$1" = "res" ]; then
 for P in /proc/[0-9]*; do
@@ -1582,18 +1577,18 @@ fi
 ;;
 esac
 done
-sleep 5 && echo "重启完成" && sleep 3 && cip
+sleep 5 && echo "重启完成！" && sleep 3 && cip
 exit
 fi
 if ! find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -r readlink 2>/dev/null | grep -Eq 'agsbx/(s|x)' && ! pgrep -f 'agsbx/(s|x)' >/dev/null 2>&1; then
 for P in /proc/[0-9]*; do if [ -L "$P/exe" ]; then TARGET=$(readlink -f "$P/exe" 2>/dev/null); if echo "$TARGET" | grep -qE '/agsbx/c|/agsbx/s|/agsbx/x'; then PID=$(basename "$P"); kill "$PID" 2>/dev/null && echo "Killed $PID ($TARGET)" || echo "Could not kill $PID ($TARGET)"; fi; fi; done
 kill -15 $(pgrep -f 'agsbx/s' 2>/dev/null) $(pgrep -f 'agsbx/c' 2>/dev/null) $(pgrep -f 'agsbx/x' 2>/dev/null) >/dev/null 2>&1
 if [ -z "$( (command -v curl >/dev/null 2>&1 && curl -s4m5 -k "$v46url" 2>/dev/null) || (command -v wget >/dev/null 2>&1 && timeout 3 wget -4 -qO- --tries=2 "$v46url" 2>/dev/null) )" ]; then
-echo "纯IPv6网络环境，可以考虑自行添加NAT64或者使用WARP。"
+echo "纯IPv6网络环境，可考虑自行添加NAT64或者使用WARP。"
 fi
 if [ -n "$( (command -v curl >/dev/null 2>&1 && curl -s6m5 -k "$v46url" 2>/dev/null) || (command -v wget >/dev/null 2>&1 && timeout 3 wget -6 -qO- --tries=2 "$v46url" 2>/dev/null) )" ]; then
 sendip="2606:4700:d0::a29f:c001"
-xendip="[2606:4700:d0::a29f:c001]"
+xendip="2606:4700:d0::a29f:c001"
 else
 sendip="162.159.192.1"
 xendip="162.159.192.1"
@@ -1614,7 +1609,7 @@ fi
 ins
 if [ -n "$hyjpt" ] && [ -n "$hyp" ]; then
 echo
-echo "设置Hysteria2协议的跳跃端口：$hyjpt"
+echo "Hysteria2跳跃端口：$hyjpt"
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 ip6tables -t nat -F PREROUTING >/dev/null 2>&1
 hyport=$(cat "$HOME/agsbx/port_hy2")
@@ -1637,7 +1632,7 @@ echo "Argosbx脚本已安装"
 echo
 argosbxstatus
 echo
-echo "相关快捷方式如下："
+echo "快捷方式如下："
 showmode
 exit
 fi
