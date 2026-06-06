@@ -164,15 +164,15 @@ rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
 if [[ -f "$HOME/agsbx/xray" ]]; then
     chmod +x "$HOME/agsbx/xray"
     xrv=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-    echo "已安装 Xray 内核，当前版本：$xrv"
+    echo "已安装 Xray 内核，版本号：$xrv"
 else
-    echo "下载 xray 内核失败，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+    echo "下载 xray 内核失败，请再安装一次，并检查VPS能否访问GitHub"
     exit 1
 fi
 }
 upsingbox(){
 sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
-curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbcore/sing-box-$sbcore-linux-$SING_BOX_ARCH.tar.gz
+curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbv/sing-box-$sbv-linux-$SING_BOX_ARCH.tar.gz
 sbname="sing-box-$sbv-linux-$SING_BOX_ARCH"
 if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
@@ -181,9 +181,9 @@ if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
     if [[ -f "$HOME/agsbx/sing-box" ]]; then
         chmod +x "$HOME/agsbx/sing-box"
         sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
-        echo "已安装 Sing-box 内核，当前版本：$sbcore"
+        echo "已安装 Sing-box 内核，版本号：$sbcore"
     else
-        echo "下载 Sing-box 内核失败，请再安装一次，并检测 VPS 的网络是否可以访问 GitHub"
+        echo "下载 Sing-box 内核失败，请再安装一次，并检查VPS能否访问GitHub"
         exit 1
 fi
 }
