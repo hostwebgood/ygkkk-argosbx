@@ -648,12 +648,15 @@ port_ss=$(cat "$HOME/agsbx/port_ss")
 echo "Shadowsocks-2022端口：$port_ss"
 cat >> "$HOME/agsbx/sb.json" <<EOF
         {
-            "type": "shadowsocks",
+            "type":"shadowsocks",
             "tag":"ss-2022",
-            "listen": "::",
-            "listen_port": $port_ss,
-            "method": "2022-blake3-chacha20-poly1305",
-            "password": "$sskey"
+            "listen":"::",
+            "listen_port":$port_ss,
+            "method":"2022-blake3-chacha20-poly1305",
+            "password":"$sskey",
+            "multiplex":{
+                "enabled":true
+            }
     },
 EOF
 else
@@ -1222,6 +1225,7 @@ private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
 public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
+sserver_ip=$(cat "$HOME/agsbx/sserver_ip" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 hyserver_ip=$(cat "$HOME/agsbx/hyserver_ip" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
@@ -1280,13 +1284,15 @@ fi
 if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks-2022 】节点信息如下："
 port_ss=$(cat "$HOME/agsbx/port_ss")
+sserver_ip=$(echo "$server_ip" | tr -d '[]')
+echo "${sserver_ip}" > "$HOME/agsbx/sserver_ip"
 ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_ss#${sxname} Shadowsocks"
-ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $hyserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
+ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $sserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 ss_link5="
   {
     \"type\": \"shadowsocks\",
     \"tag\": \"${sxname} Shadowsocks\",
-    \"server\": \"$hyserver_ip\",
+    \"server\": \"$sserver_ip\",
     \"server_port\": \"$port_ss\",
     \"method\": \"2022-blake3-chacha20-poly1305\",
     \"password\": \"$sskey\",
