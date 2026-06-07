@@ -204,7 +204,7 @@ echo "UUID密码：$uuid"
 }
 installxray(){
 echo
-echo "=========下载并启用xray内核========="
+echo "=========启用xray内核========="
 mkdir -p "$HOME/agsbx/xrk"
 if [ ! -e "$HOME/agsbx/xray" ]; then
 upxray
@@ -445,7 +445,7 @@ fi
 
 installsb(){
 echo
-echo "=========下载并启用Sing-box内核========="
+echo "=========启用Sing-box内核========="
 if [ ! -e "$HOME/agsbx/sing-box" ]; then
 upsingbox
 fi
@@ -634,7 +634,7 @@ fi
 if [ -n "$ssp" ]; then
 ssp=sspt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$("$HOME/agsbx/sing-box" generate rand 32 --base64)
+sskey=$("$HOME/agsbx/sing-box" generate rand --base64 32)
 echo "$sskey" > "$HOME/agsbx/sskey"
 fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
@@ -1012,7 +1012,7 @@ xrsbout
 fi
 if [ -n "$argo" ] && [ -n "$vmag" ]; then
 echo
-echo "=========下载并启用Cloudflared-argo内核========="
+echo "=========启用Cloudflared-argo内核========="
 if [ ! -e "$HOME/agsbx/cloudflared" ]; then
 argocore=$({ command -v curl >/dev/null 2>&1 && curl -Ls https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared || wget -qO- https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared; } | grep -Eo '"[0-9.]+"' | sed -n 1p | tr -d '",')
 echo "正在下载Cloudflared-argo内核：$argocore"
@@ -1116,9 +1116,9 @@ fi
 fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
-echo "进程启动成功，安装完毕！" && sleep 2
+echo "安装完毕！" && sleep 2
 else
-echo "进程未启动，安装失败！" && exit
+echo "未启动，安装失败！" && exit
 fi
 }
 argosbxstatus(){
@@ -1364,7 +1364,7 @@ hy2_link5="
     \"type\": \"hysteria2\",
     \"tag\": \"${sxname} Hysteria2\"
     \"server\": \"$hyserver_ip\",
-    \"server_port\": \"$port_xh\",
+    \"server_port\": \"$port_hy2\",
     \"server_ports\":[
         $sbhy2pt
      ],
