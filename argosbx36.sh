@@ -649,15 +649,12 @@ echo "Shadowsocks-2022端口：$port_ss"
 cat >> "$HOME/agsbx/sb.json" <<EOF
         {
             "type": "shadowsocks",
-            "tag": "ss-2022",
+            "tag":"ss-2022",
             "listen": "::",
             "listen_port": $port_ss,
             "method": "2022-blake3-chacha20-poly1305",
-            "password": "$sskey",
-            "multiplex":{
-                "enabled": true
-           } 
-        },
+            "password": "$sskey"
+    },
 EOF
 else
 ssp=ssptargo
