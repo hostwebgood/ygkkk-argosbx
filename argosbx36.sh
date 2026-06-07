@@ -171,13 +171,13 @@ else
 fi
 }
 upsingbox(){
-DEFAULT_NEWEST_VERSION='1.13.13'
+DEFAULT_VERSION='1.13.13'
 API_RESPONSE=$(wget --no-check-certificate --server-response --tries=2 --timeout=3 -qO- "https://api.github.com/repos/SagerNet/sing-box/releases" 2>&1 | grep -E '^[ ]+HTTP/|tag_name')
     if grep -q 'HTTP.* 200' <<< "$API_RESPONSE"; then
-    VERSION_LATEST=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -Vr | sed -n '1p')
-    sbv=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION_LATEST" '$0 ~ var {print $5; exit}')
+    VERSION=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -V | sed -n '1p')
+    sbv=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION" '$0 ~ var {print $5; exit}')
     else
-    sbv="$DEFAULT_NEWEST_VERSION"
+    sbv="$DEFAULT_VERSION"
     fi
 #sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbv/sing-box-$sbv-linux-$SING_BOX_ARCH.tar.gz
