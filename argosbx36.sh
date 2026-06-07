@@ -106,7 +106,7 @@ if [ -n "$name" ]; then
 sxname=$name
 echo "$sxname" > "$HOME/agsbx/name"
 echo
-echo "所有节点前缀：$name"
+echo "节点前缀：$name"
 fi
 v4v6
 if echo "$v6" | grep -q '^2a09' || echo "$v4" | grep -q '^104.28'; then
@@ -204,7 +204,7 @@ echo "UUID密码：$uuid"
 }
 installxray(){
 echo
-echo "=========启用xray内核========="
+echo "=========下载并启用xray内核========="
 mkdir -p "$HOME/agsbx/xrk"
 if [ ! -e "$HOME/agsbx/xray" ]; then
 upxray
@@ -445,7 +445,7 @@ fi
 
 installsb(){
 echo
-echo "=========启用Sing-box内核========="
+echo "=========下载并启用Sing-box内核========="
 if [ ! -e "$HOME/agsbx/sing-box" ]; then
 upsingbox
 fi
@@ -1012,10 +1012,10 @@ xrsbout
 fi
 if [ -n "$argo" ] && [ -n "$vmag" ]; then
 echo
-echo "=========启用Cloudflared-argo内核========="
+echo "=========下载并启用Cloudflared-argo内核========="
 if [ ! -e "$HOME/agsbx/cloudflared" ]; then
 argocore=$({ command -v curl >/dev/null 2>&1 && curl -Ls https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared || wget -qO- https://data.jsdelivr.com/v1/package/gh/cloudflare/cloudflared; } | grep -Eo '"[0-9.]+"' | sed -n 1p | tr -d '",')
-echo "下载Cloudflared-argo正式版内核：$argocore"
+echo "正在下载Cloudflared-argo内核：$argocore"
 url="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu"; out="$HOME/agsbx/cloudflared"; (command -v curl>/dev/null 2>&1 && curl -Lo "$out" -# --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -O "$out" --tries=2 "$url")
 chmod +x "$HOME/agsbx/cloudflared"
 fi
@@ -1072,9 +1072,9 @@ else
 argodomain=$(grep -a trycloudflare.com "$HOME/agsbx/argo.log" 2>/dev/null | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 fi
 if [ -n "${argodomain}" ]; then
-echo "Argo$argoname隧道申请成功"
+echo "Argo$argoname隧道申请成功！"
 else
-echo "Argo$argoname隧道申请失败，请重试"
+echo "Argo$argoname隧道申请失败，请重试！"
 fi
 fi
 sleep 5
@@ -1116,13 +1116,13 @@ fi
 fi
 crontab /tmp/crontab.tmp >/dev/null 2>&1
 rm /tmp/crontab.tmp
-echo "Argosbx脚本进程启动成功，安装完毕" && sleep 2
+echo "进程启动成功，安装完毕！" && sleep 2
 else
-echo "Argosbx脚本进程未启动，安装失败" && exit
+echo "进程未启动，安装失败！" && exit
 fi
 }
 argosbxstatus(){
-echo "=========当前三大内核运行状态========="
+echo "=========当前内核运行状态========="
 procs=$(find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -r readlink 2>/dev/null)
 if echo "$procs" | grep -Eq 'agsbx/s' || pgrep -f 'agsbx/s' >/dev/null 2>&1; then
 echo "Sing-box (版本V$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/version/{print $NF}'))：运行中"
@@ -1207,7 +1207,7 @@ sxname=$(cat "$HOME/agsbx/name" 2>/dev/null)
 xvvmcdnym=$(cat "$HOME/agsbx/cdnym" 2>/dev/null)
 echo "*********************************************************"
 echo "*********************************************************"
-echo "Argosbx脚本输出的节点配置如下："
+echo "节点配置："
 echo
 case "$server_ip" in
 104.28*|\[2a09*) echo "检测到使用WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请将客户端地址上的WARP的IP手动更换为VPS的IPV4或IPV6" && sleep 3 ;;
@@ -1227,6 +1227,7 @@ public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
+hyserver_ip=$(cat "$HOME/agsbx/hyserver_ip" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
@@ -1284,12 +1285,12 @@ if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks-2022 】节点信息如下："
 port_ss=$(cat "$HOME/agsbx/port_ss")
 ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_ss#${sxname} Shadowsocks"
-ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
+ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $hyserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 ss_link5="
   {
     \"type\": \"shadowsocks\",
     \"tag\": \"${sxname} Shadowsocks\",
-    \"server\": \"$server_ip\",
+    \"server\": \"$hyserver_ip\",
     \"server_port\": \"$port_ss\",
     \"method\": \"2022-blake3-chacha20-poly1305\",
     \"password\": \"$sskey\",
@@ -1298,7 +1299,9 @@ echo "$ss_link" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link3" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link5" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link"
+echo
 echo "$ss_link3"
+echo
 echo "$ss_link5"
 echo
 fi
@@ -1341,11 +1344,13 @@ hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_hy2" | awk '
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
+hyserver_ip=$(echo "$server_ip" | tr -d '[]')
 mport="$port_hy2,$cmhy2pt"
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
+echo "${hyserver_ip}" > "$HOME/agsbx/hyserver_ip"
 echo "${mport}" > "$HOME/agsbx/mport"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
@@ -1353,15 +1358,15 @@ echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
 fi
 hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-hy2_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+hy2_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $hyserver_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 hy2_link5="
   {
     \"type\": \"hysteria2\",
     \"tag\": \"${sxname} Hysteria2\"
-    \"server\": \"$server_ip\",
+    \"server\": \"$hyserver_ip\",
     \"server_port\": \"$port_xh\",
     \"server_ports\":[
-      \"$sbhy2pt\"
+        $sbhy2pt
      ],
     \"hop_interval\": \"17s\",
     \"hop_interval_max\": \"30s\", 
@@ -1382,8 +1387,11 @@ echo "$hy2_link1" >> "$HOME/agsbx/jh.txt"
 echo "$hy2_link3" >> "$HOME/agsbx/jh.txt"
 echo "$hy2_link5" >> "$HOME/agsbx/jh.txt"
 echo "$hy2_link"
+echo
 echo "$hy2_link1"
+echo
 echo "$hy2_link3"
+echo
 echo "$hy2_link5"
 echo
 fi
@@ -1530,7 +1538,7 @@ exit
 elif [ "$1" = "rep" ]; then
 cleandel
 rm -rf "$HOME/agsbx"/{sb.json,xr.json,sbargoym.log,sbargotoken.log,argo.log,argoport.log,cdnym,name}
-echo "重置Argosbx脚本协议已完成，开始更新相关配置……" && sleep 2
+echo "重置Argosbx脚本配置完成，开始更新相关配置……" && sleep 2
 echo
 elif [ "$1" = "list" ]; then
 cip
@@ -1595,7 +1603,7 @@ xendip="162.159.192.1"
 fi
 echo "VPS系统：$op"
 echo "CPU架构：$cpu"
-echo "Argosbx脚本未安装，开始安装…………" && sleep 1
+echo "正在安装Argosbx脚本…………" && sleep 1
 if [ -n "$oap" ]; then
 setenforce 0 >/dev/null 2>&1
 iptables -P INPUT ACCEPT >/dev/null 2>&1
@@ -1604,12 +1612,10 @@ iptables -P OUTPUT ACCEPT >/dev/null 2>&1
 iptables -F >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
 echo
-echo "iptables执行开放所有端口"
+echo "iptables开放所有端口"
 fi
 ins
 if [ -n "$hyjpt" ] && [ -n "$hyp" ]; then
-echo
-echo "Hysteria2跳跃端口：$hyjpt"
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 ip6tables -t nat -F PREROUTING >/dev/null 2>&1
 hyport=$(cat "$HOME/agsbx/port_hy2")
