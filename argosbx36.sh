@@ -654,7 +654,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "listen_port": $port_ss,
             "method": "2022-blake3-chacha20-poly1305",
             "password": "$sskey"
-    },
+        },
 EOF
 else
 ssp=ssptargo
