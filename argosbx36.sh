@@ -656,7 +656,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "password": "$sskey",
             "multiplex":{
                 "enabled":true,
-                "padding":true,
+                "padding":true
             }    
     },  
 EOF
