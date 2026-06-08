@@ -111,7 +111,7 @@ fi
 v4v6
 if echo "$v6" | grep -q '^2a09' || echo "$v4" | grep -q '^104.28'; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
-echo; echo "请注意：你已安装了WARP"
+echo; echo "你已安装了WARP！"
 else
 if [ "$wap" != yes ]; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
@@ -179,6 +179,7 @@ upsingbox(){
 #else
 #sbv="$DEFAULT_VERSION"
 #fi
+#sbv='1.13.5'
 sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbv/sing-box-$sbv-linux-$SING_BOX_ARCH.tar.gz
 sbname="sing-box-$sbv-linux-$SING_BOX_ARCH"
@@ -1237,6 +1238,9 @@ mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
+tuserver_ip=$(cat "$HOME/agsbx/tuserver_ip" 2>/dev/null)
+FPT_SHA256=$(cat "$HOME/agsbx/FPT_SHA256" 2>/dev/null)
+FPT_BASE64=$(cat "$HOME/agsbx/FPT_BASE64" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Vless-xhttp-reality-enc 】支持ENC加密，节点信息如下："
@@ -1292,7 +1296,7 @@ port_ss=$(cat "$HOME/agsbx/port_ss")
 sserver_ip=$(echo "$server_ip" | tr -d '[]')
 echo "${sserver_ip}" > "$HOME/agsbx/sserver_ip"
 ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_ss#${sxname} Shadowsocks"
-ss_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $sserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
+ss_link3="- {name: \"${sxname} Shadowsocks\", type: ss, server: $sserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 ss_link5="
   {
     \"type\": \"shadowsocks\",
@@ -1300,7 +1304,7 @@ ss_link5="
     \"server\": \"$sserver_ip\",
     \"server_port\": \"$port_ss\",
     \"method\": \"2022-blake3-chacha20-poly1305\",
-    \"password\": \"$sskey\",
+    \"password\": \"$sskey\"
   },"
 echo "$ss_link" >> "$HOME/agsbx/jh.txt"
 echo "$ss_link3" >> "$HOME/agsbx/jh.txt"
@@ -1365,7 +1369,7 @@ echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
 fi
 hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-hy2_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $hyserver_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+hy2_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $hyserver_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 hy2_link5="
   {
     \"type\": \"hysteria2\",
@@ -1379,14 +1383,14 @@ hy2_link5="
     \"hop_interval_max\": \"30s\", 
     \"password\": \"$uuid\",
     \"tls\": {
-    \"enabled\": true,
-    \"server_name\": \"player.live-video.net\",
-    \"certificate_public_key_sha256\": [
-      \"${FP_BASE64}\"
-     ],
-    \"alpn\": [
-      \"h3\"
-     ]
+        \"enabled\": true,
+        \"server_name\": \"player.live-video.net\",
+        \"certificate_public_key_sha256\": [
+           \"${FP_BASE64}\"
+        ],
+        \"alpn\": [
+           \"h3\"
+        ]
     }
   },"
 echo "$hy2_link" >> "$HOME/agsbx/jh.txt"
@@ -1403,11 +1407,47 @@ echo "$hy2_link5"
 echo
 fi
 if grep tuic5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Tuic 】节点信息如下："
+echo "💣【 TUIC 】节点信息如下："
 port_tu=$(cat "$HOME/agsbx/port_tu")
-tuic5_link="tuic://$uuid:$uuid@$server_ip:$port_tu?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=player.live-video.net&allow_insecure=1&allowInsecure=1#${sxname} Tuic"
+tuserver_ip=$(echo "$server_ip" | tr -d '[]')
+FPT_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FPT_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${tuserver_ip}" > "$HOME/agsbx/tuserver_ip"
+echo "${FPT_SHA256}" > "$HOME/agsbx/FPT_SHA256"
+echo "${FPT_BASE64}" > "$HOME/agsbx/FPT_BASE64"
+tuic5_link="tuic://$uuid:$uuid@$server_ip:$port_tu?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=player.live-video.net&allow_insecure=1&allowInsecure=1&pinSHA256=${FPT_SHA256}#${sxname} TUIC"
+tuic5_link3="- {name: \"${sxname} TUIC\", type: tuic, server: $tuserver_ip, port: $port_tu, uuid: $uuid, password: $uuid, alpn: [h3], reduce-rtt: true, request-timeout: 8000, udp-relay-mode: native, congestion-controller: bbr, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FPT_SHA256}}"
+tuic5_link5="
+  {
+	\"type\": \"tuic\",
+	\"tag\": \"${sxname} TUIC\",
+	\"server\": \"$tuserver_ip\",
+	\"server_port\": $port_tu,
+	\"uuid\": \"$uuid\",
+	\"password\": \"$uuid\",
+	\"congestion_control\": \"bbr\",
+	\"udp_relay_mode\": \"native\",
+	\"zero_rtt_handshake\": false,
+	\"heartbeat\": \"10s\",
+	\"tls\": {
+	 	\"enabled\": true,
+	 	\"server_name\": \"player.live-video.net\",
+	 	\"certificate_public_key_sha256\": [
+	 	    \"${FPT_BASE64}\"
+	 	],
+	 	\"alpn\": [
+		   \"h3\"
+	 	]
+	}
+  },"
 echo "$tuic5_link" >> "$HOME/agsbx/jh.txt"
+echo "$tuic5_link3" >> "$HOME/agsbx/jh.txt"
+echo "$tuic5_link5" >> "$HOME/agsbx/jh.txt"
 echo "$tuic5_link"
+echo
+echo "$tuic5_link3"
+echo
+echo "$tuic5_link5"
 echo
 fi
 if grep socks5-xr "$HOME/agsbx/xr.json" >/dev/null 2>&1 || grep socks5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
@@ -1537,10 +1577,9 @@ fi
 
 if [ "$1" = "del" ]; then
 cleandel
-rm -rf "$HOME/agsbx" "$HOME/agsb" "$HOME/sbx_update" "$HOME/bin/agsbx"
+rm -rf "$HOME/agsbx" "$HOME/sbx_update" "$HOME/bin/agsbx"
 echo "卸载完成！" && sleep 2
 echo
-showmode
 exit
 elif [ "$1" = "rep" ]; then
 cleandel
