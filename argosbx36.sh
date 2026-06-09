@@ -14,10 +14,10 @@ export LANG=en_US.UTF-8
 [ -z "${warp+x}" ] || wap=yes
 if find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -r readlink 2>/dev/null | grep -Eq 'agsbx/(s|x)' || pgrep -f 'agsbx/(s|x)' >/dev/null 2>&1; then
 if [ "$1" = "rep" ]; then
-[ "$vwp" = yes ] || [ "$sop" = yes ] || [ "$vxp" = yes ] || [ "$ssp" = yes ] || [ "$vlp" = yes ] || [ "$vmp" = yes ] || [ "$hyp" = yes ] || [ "$tup" = yes ] || [ "$xhp" = yes ] || [ "$anp" = yes ] || [ "$arp" = yes ] || { echo "提示：rep重置协议时，请在脚本前至少设置一个协议变量哦，再见！💣"; exit; }
+[ "$vwp" = yes ] || [ "$sop" = yes ] || [ "$vxp" = yes ] || [ "$ssp" = yes ] || [ "$vlp" = yes ] || [ "$vmp" = yes ] || [ "$hyp" = yes ] || [ "$tup" = yes ] || [ "$xhp" = yes ] || [ "$anp" = yes ] || [ "$arp" = yes ] || { echo "rep重置协议时，请在主脚本命令前至少设置一个协议变量。"; exit; }
 fi
 else
-[ "$1" = "del" ] || [ "$vwp" = yes ] || [ "$sop" = yes ] || [ "$vxp" = yes ] || [ "$ssp" = yes ] || [ "$vlp" = yes ] || [ "$vmp" = yes ] || [ "$hyp" = yes ] || [ "$tup" = yes ] || [ "$xhp" = yes ] || [ "$anp" = yes ] || [ "$arp" = yes ] || { echo "提示：未安装argosbx脚本，请在脚本前至少设置一个协议变量哦，再见！💣"; exit; }
+[ "$1" = "del" ] || [ "$vwp" = yes ] || [ "$sop" = yes ] || [ "$vxp" = yes ] || [ "$ssp" = yes ] || [ "$vlp" = yes ] || [ "$vmp" = yes ] || [ "$hyp" = yes ] || [ "$tup" = yes ] || [ "$xhp" = yes ] || [ "$anp" = yes ] || [ "$arp" = yes ] || { echo "未安装argosbx脚本，请在主脚本命令前至少设置一个协议变量。"; exit; }
 fi
 export uuid=${uuid:-''}
 export port_vl_re=${vlpt:-''}
@@ -470,6 +470,12 @@ EOF
 insuuid
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+server_ip1=$(echo "$server_ip" | tr -d '[]')
+FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${server_ip1}" > "$HOME/agsbx/server_ip1"
+echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
+echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 if [ ! -f "$HOME/agsbx/private.key" ]; then
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
@@ -522,7 +528,7 @@ elif [ -n "$port_tu" ]; then
 echo "$port_tu" > "$HOME/agsbx/port_tu"
 fi
 port_tu=$(cat "$HOME/agsbx/port_tu")
-echo "Tuic端口：$port_tu"
+echo "TUIC端口：$port_tu"
 cat >> "$HOME/agsbx/sb.json" <<EOF
         {
             "type":"tuic",
@@ -1231,16 +1237,12 @@ private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
 public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
-sserver_ip=$(cat "$HOME/agsbx/sserver_ip" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
-hyserver_ip=$(cat "$HOME/agsbx/hyserver_ip" 2>/dev/null)
+server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
-tuserver_ip=$(cat "$HOME/agsbx/tuserver_ip" 2>/dev/null)
-FPT_SHA256=$(cat "$HOME/agsbx/FPT_SHA256" 2>/dev/null)
-FPT_BASE64=$(cat "$HOME/agsbx/FPT_BASE64" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Vless-xhttp-reality-enc 】支持ENC加密，节点信息如下："
@@ -1293,16 +1295,14 @@ fi
 if grep ss-2022 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks-2022 】节点信息如下："
 port_ss=$(cat "$HOME/agsbx/port_ss")
-sserver_ip=$(echo "$server_ip" | tr -d '[]')
-echo "${sserver_ip}" > "$HOME/agsbx/sserver_ip"
 ss_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_ss#${sxname} Shadowsocks"
-ss_link3="- {name: \"${sxname} Shadowsocks\", type: ss, server: $sserver_ip, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
+ss_link3="- {name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip1, port: $port_ss, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 ss_link5="
   {
     \"type\": \"shadowsocks\",
     \"tag\": \"${sxname} Shadowsocks\",
-    \"server\": \"$sserver_ip\",
-    \"server_port\": \"$port_ss\",
+    \"server\": \"$server_ip1\",
+    \"server_port\": $port_ss,
     \"method\": \"2022-blake3-chacha20-poly1305\",
     \"password\": \"$sskey\"
   },"
@@ -1335,9 +1335,38 @@ fi
 if grep anytls-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 AnyTLS 】节点信息如下："
 port_an=$(cat "$HOME/agsbx/port_an")
-an_link="anytls://$uuid@$server_ip:$port_an?insecure=1&allowInsecure=1#${sxname} Anytls"
+an_link="anytls://$uuid@$server_ip:$port_an?idle_session_check_interval=30s&idle_session_timeout=30s&min_idle_session=5&insecure=1&allowInsecure=1&security=tls&sni=player.live-video.net&fp=firefox&pinSHA256=${FP_SHA256}#${sxname} Anytls"
+an_link3="- {name: \"${sxname} Anytls\", type: anytls, server: $server_ip1, port: $port_an, password: $uuid, client-fingerprint: firefox, udp: true, idle-session-check-interval: 30, idle-session-timeout: 30, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+an_link5="
+  {
+    \"type\": \"anytls\",
+    \"tag\": \"${sxname} Anytls\",
+    \"server\": \"$server_ip1\",
+    \"server_port\": $port_an,
+    \"password\": \"$uuid\",
+    \"idle_session_check_interval\": \"30s\",
+    \"idle_session_timeout\": \"30s\",
+    \"min_idle_session\": 5,
+    \"tls\": {
+        \"enabled\": true,
+        \"certificate_public_key_sha256\": [
+           \"${FP_BASE64}\"
+        ],
+        \"server_name\": \"player.live-video.net\",
+        \"utls\": {
+           \"enabled\": true,
+           \"fingerprint\": \"firefox\"
+        }
+    }
+  },"
 echo "$an_link" >> "$HOME/agsbx/jh.txt"
+echo "$an_link3" >> "$HOME/agsbx/jh.txt"
+echo "$an_link5" >> "$HOME/agsbx/jh.txt"
 echo "$an_link"
+echo
+echo "$an_link3"
+echo
+echo "$an_link5"
 echo
 fi
 if grep anyreality-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
@@ -1355,26 +1384,20 @@ hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_hy2" | awk '
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
 echo "Hysteria2跳跃端口已开启：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-hyserver_ip=$(echo "$server_ip" | tr -d '[]')
 mport="$port_hy2,$cmhy2pt"
-FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
 echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
-echo "${hyserver_ip}" > "$HOME/agsbx/hyserver_ip"
 echo "${mport}" > "$HOME/agsbx/mport"
-echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
-echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
 fi
 hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-hy2_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $hyserver_ip, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+hy2_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 hy2_link5="
   {
     \"type\": \"hysteria2\",
     \"tag\": \"${sxname} Hysteria2\"
-    \"server\": \"$hyserver_ip\",
+    \"server\": \"$server_ip1\",
     \"server_port\": \"$port_hy2\",
     \"server_ports\":[
         $sbhy2pt
@@ -1409,36 +1432,30 @@ fi
 if grep tuic5-sb "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 TUIC 】节点信息如下："
 port_tu=$(cat "$HOME/agsbx/port_tu")
-tuserver_ip=$(echo "$server_ip" | tr -d '[]')
-FPT_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FPT_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-echo "${tuserver_ip}" > "$HOME/agsbx/tuserver_ip"
-echo "${FPT_SHA256}" > "$HOME/agsbx/FPT_SHA256"
-echo "${FPT_BASE64}" > "$HOME/agsbx/FPT_BASE64"
-tuic5_link="tuic://$uuid:$uuid@$server_ip:$port_tu?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=player.live-video.net&allow_insecure=1&allowInsecure=1&pinSHA256=${FPT_SHA256}#${sxname} TUIC"
-tuic5_link3="- {name: \"${sxname} TUIC\", type: tuic, server: $tuserver_ip, port: $port_tu, uuid: $uuid, password: $uuid, alpn: [h3], reduce-rtt: true, request-timeout: 8000, udp-relay-mode: native, congestion-controller: bbr, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FPT_SHA256}}"
+tuic5_link="tuic://$uuid:$uuid@$server_ip:$port_tu?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=player.live-video.net&allow_insecure=1&allowInsecure=1&pinSHA256=${FP_SHA256}#${sxname} TUIC"
+tuic5_link3="- {name: \"${sxname} TUIC\", type: tuic, server: $server_ip1, port: $port_tu, uuid: $uuid, password: $uuid, alpn: [h3], reduce-rtt: true, request-timeout: 8000, udp-relay-mode: native, congestion-controller: bbr, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 tuic5_link5="
   {
-	\"type\": \"tuic\",
-	\"tag\": \"${sxname} TUIC\",
-	\"server\": \"$tuserver_ip\",
-	\"server_port\": $port_tu,
-	\"uuid\": \"$uuid\",
-	\"password\": \"$uuid\",
-	\"congestion_control\": \"bbr\",
-	\"udp_relay_mode\": \"native\",
-	\"zero_rtt_handshake\": false,
-	\"heartbeat\": \"10s\",
-	\"tls\": {
-	 	\"enabled\": true,
-	 	\"server_name\": \"player.live-video.net\",
-	 	\"certificate_public_key_sha256\": [
-	 	    \"${FPT_BASE64}\"
-	 	],
-	 	\"alpn\": [
-		   \"h3\"
-	 	]
-	}
+    \"type\": \"tuic\",
+    \"tag\": \"${sxname} TUIC\",
+    \"server\": \"$server_ip1\",
+    \"server_port\": $port_tu,
+    \"uuid\": \"$uuid\",
+    \"password\": \"$uuid\",
+    \"congestion_control\": \"bbr\",
+    \"udp_relay_mode\": \"native\",
+    \"zero_rtt_handshake\": false,
+    \"heartbeat\": \"10s\",
+    \"tls\": {
+        \"enabled\": true,
+        \"server_name\": \"player.live-video.net\",
+        \"certificate_public_key_sha256\": [
+           \"${FP_BASE64}\"
+        ],
+        \"alpn\": [
+           \"h3\"
+        ]
+    }
   },"
 echo "$tuic5_link" >> "$HOME/agsbx/jh.txt"
 echo "$tuic5_link3" >> "$HOME/agsbx/jh.txt"
@@ -1467,30 +1484,8 @@ vlvm=$(cat $HOME/agsbx/vlvm 2>/dev/null)
 if [ "$vlvm" = "Vmess" ]; then
 vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo-TLS\", \"add\": \"wto.org\", \"port\": \"443\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
 echo "$vmatls_link1" >> "$HOME/agsbx/jh.txt"
-vmatls_link2="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-tls-argo-$hostname-8443\", \"add\": \"yg2.ygkkk.dpdns.org\", \"port\": \"8443\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
-echo "$vmatls_link2" >> "$HOME/agsbx/jh.txt"
-vmatls_link3="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-tls-argo-$hostname-2053\", \"add\": \"yg3.ygkkk.dpdns.org\", \"port\": \"2053\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
-echo "$vmatls_link3" >> "$HOME/agsbx/jh.txt"
-vmatls_link4="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-tls-argo-$hostname-2083\", \"add\": \"yg4.ygkkk.dpdns.org\", \"port\": \"2083\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
-echo "$vmatls_link4" >> "$HOME/agsbx/jh.txt"
-vmatls_link5="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-tls-argo-$hostname-2087\", \"add\": \"yg5.ygkkk.dpdns.org\", \"port\": \"2087\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
-echo "$vmatls_link5" >> "$HOME/agsbx/jh.txt"
-vmatls_link6="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-tls-argo-$hostname-2096\", \"add\": \"[2606:4700::0]\", \"port\": \"2096\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
-echo "$vmatls_link6" >> "$HOME/agsbx/jh.txt"
 vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo\", \"add\": \"wto.org\", \"port\": \"80\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vma_link7" >> "$HOME/agsbx/jh.txt"
-vma_link8="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo\", \"add\": \"yg7.ygkkk.dpdns.org\", \"port\": \"8080\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link8" >> "$HOME/agsbx/jh.txt"
-vma_link9="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-argo-$hostname-8880\", \"add\": \"yg8.ygkkk.dpdns.org\", \"port\": \"8880\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link9" >> "$HOME/agsbx/jh.txt"
-vma_link10="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-argo-$hostname-2052\", \"add\": \"yg9.ygkkk.dpdns.org\", \"port\": \"2052\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link10" >> "$HOME/agsbx/jh.txt"
-vma_link11="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-argo-$hostname-2082\", \"add\": \"yg10.ygkkk.dpdns.org\", \"port\": \"2082\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link11" >> "$HOME/agsbx/jh.txt"
-vma_link12="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-argo-$hostname-2086\", \"add\": \"yg11.ygkkk.dpdns.org\", \"port\": \"2086\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link12" >> "$HOME/agsbx/jh.txt"
-vma_link13="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname}vmess-ws-argo-$hostname-2095\", \"add\": \"[2400:cb00:2049::0]\", \"port\": \"2095\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
-echo "$vma_link13" >> "$HOME/agsbx/jh.txt"
 elif [ "$vlvm" = "Vless" ]; then
 vwatls_link1="vless://$uuid@yg$(cfip).ygkkk.dpdns.org:443?encryption=$enkey&flow=xtls-rprx-vision&type=ws&host=$argodomain&path=$uuid-vw?ed=2560&security=tls&sni=$argodomain&fp=chrome&insecure=0&allowInsecure=0#${sxname} Argo-TLS-ENC"
 echo "$vwatls_link1" >> "$HOME/agsbx/jh.txt"
@@ -1514,13 +1509,11 @@ ${vma_link7}${vwa_link2}
 "
 )
 fi
-echo "---------------------------------------------------------"
+echo
 echo "$argoshow"
 echo
-echo "---------------------------------------------------------"
 echo "聚合节点信息，请进入 $HOME/agsbx/jh.txt 文件目录查看或者运行 cat $HOME/agsbx/jh.txt 查看"
-echo "========================================================="
-echo "相关快捷方式如下：(提示：首次安装成功后需重连SSH，agsbx快捷方式方可生效！)"
+echo "首次安装成功后需重连SSH，agsbx快捷方式方可生效！"
 showmode
 }
 cleandel(){
@@ -1547,7 +1540,7 @@ for svc in sing-box xray argo; do
 rc-service "$svc" stop >/dev/null 2>&1
 rc-update del "$svc" default >/dev/null 2>&1
 done
-rm -rf /etc/init.d/{sing-box,xray,argo} /etc/local.d/alpineargosbx.start /etc/local.d/alpinesubsbx.start
+rm -rf /etc/init.d/{sing-box,xray,argo}
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
 rc-service iptables save >/dev/null 2>&1
@@ -1584,7 +1577,7 @@ exit
 elif [ "$1" = "rep" ]; then
 cleandel
 rm -rf "$HOME/agsbx"/{sb.json,xr.json,sbargoym.log,sbargotoken.log,argo.log,argoport.log,cdnym,name}
-echo "重置Argosbx脚本配置完成，开始更新相关配置……" && sleep 2
+echo "正在重置Argosbx脚本相关配置……" && sleep 2
 echo
 elif [ "$1" = "list" ]; then
 cip
