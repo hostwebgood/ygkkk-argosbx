@@ -1382,7 +1382,7 @@ echo "💣【 Hysteria2 】节点信息如下："
 port_hy2=$(cat "$HOME/agsbx/port_hy2")
 hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_hy2" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
 if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
-echo "Hysteria2跳跃端口已开启：$hy2_ports"
+echo "Hysteria2跳跃端口：$hy2_ports"
 cmhy2pt=$(echo $hy2_ports | tr ':' '-')
 mport="$port_hy2,$cmhy2pt"
 sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
@@ -1398,7 +1398,7 @@ hy2_link5="
     \"type\": \"hysteria2\",
     \"tag\": \"${sxname} Hysteria2\"
     \"server\": \"$server_ip1\",
-    \"server_port\": \"$port_hy2\",
+    \"server_port\": $port_hy2,
     \"server_ports\":[
         $sbhy2pt
      ],
