@@ -470,10 +470,8 @@ EOF
 insuuid
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
-server_ip1=$(echo "$server_ip" | tr -d '[]')
 FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
 FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-echo "${server_ip1}" > "$HOME/agsbx/server_ip1"
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 if [ ! -f "$HOME/agsbx/private.key" ]; then
@@ -1205,6 +1203,8 @@ ipbest
 else
 server_ip="[$v6]"
 echo "$server_ip" > "$HOME/agsbx/server_ip.log"
+server_ip1=$(echo "$server_ip" | tr -d '[]')
+echo "${server_ip1}" > "$HOME/agsbx/server_ip1"
 fi
 else
 ipbest
