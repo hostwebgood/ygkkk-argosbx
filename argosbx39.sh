@@ -62,15 +62,6 @@ echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
 echo "当前版本：Forked from V26.5.10 Mod V26.6.11"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-hostname=$(uname -a | awk '{print $2}')
-op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
-[ -z "$(systemd-detect-virt 2>/dev/null)" ] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
-case $(uname -m) in
-armv7l) cpu=armv7 XRAY_ARCH=arm32-v7a SING_BOX_ARCH=armv7;;
-arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
-amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
-*) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
-esac
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
 if command -v apk >/dev/null 2>&1; then
@@ -99,6 +90,16 @@ FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey 
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
 fi
+hostname=$(uname -a | awk '{print $2}')
+op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
+[ -z "$(systemd-detect-virt 2>/dev/null)" ] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
+case $(uname -m) in
+armv7l) cpu=armv7 XRAY_ARCH=arm32-v7a SING_BOX_ARCH=armv7;;
+arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
+amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
+*) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
+esac
+
 if [ ! -f sbx_update ]; then
 echo "依赖安装中，请稍等……"
 if command -v apk >/dev/null 2>&1; then
