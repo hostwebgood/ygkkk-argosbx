@@ -82,8 +82,15 @@ fi
 if [ ! -f "$HOME/agsbx/private.key" ]; then
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+sskey=$(openssl rand -base64 32)
 echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
 echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
+echo "${sskey}" > "$HOME/agsbx/sskey"
+FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
+FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
+sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 else
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
@@ -325,10 +332,6 @@ fi
 
 if [ -n "$vxp" ]; then
 vxp=vxpt
-if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey1=$(openssl rand -base64 32)
-echo "$sskey1" > "$HOME/agsbx/sskey1"
-fi
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
 port_vx=$(shuf -i 10000-65535 -n 1)
 echo "$port_vx" > "$HOME/agsbx/port_vx"
@@ -345,7 +348,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
       "port": $port_vx,
       "settings": {
         "method": "2022-blake3-chacha20-poly1305",
-        "password": "$sskey1",
+        "password": "$sskey",
         "network": "tcp,udp"
       },
       "sniffing": {
@@ -641,10 +644,6 @@ arp=arptargo
 fi
 if [ -n "$ssp" ]; then
 ssp=sspt
-if [ ! -e "$HOME/agsbx/sskey" ]; then
-sskey=$(openssl rand -base64 32)
-echo "$sskey" > "$HOME/agsbx/sskey"
-fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
 port_ss=$(shuf -i 10000-65535 -n 1)
 echo "$port_ss" > "$HOME/agsbx/port_ss"
@@ -1226,24 +1225,18 @@ private_key_x=$(cat "$HOME/agsbx/xrk/private_key" 2>/dev/null)
 public_key_x=$(cat "$HOME/agsbx/xrk/public_key" 2>/dev/null)
 short_id_x=$(cat "$HOME/agsbx/xrk/short_id" 2>/dev/null)
 enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
-sskey1=$(cat "$HOME/agsbx/sskey1" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
-FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
-FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
 public_key_s=$(cat "$HOME/agsbx/sbk/public_key" 2>/dev/null)
 short_id_s=$(cat "$HOME/agsbx/sbk/short_id" 2>/dev/null)
-sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
-FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
-FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
@@ -1301,8 +1294,8 @@ fi
 if grep vless-xhttp "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Shadowsocks2022 】节点信息如下："
 port_vx=$(cat "$HOME/agsbx/port_vx")
-vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey1" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
-vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip1, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey1, udp: true }"
+vl_vx_link="ss://$(echo -n "2022-blake3-chacha20-poly1305:$sskey" | base64 -w0)@$server_ip:$port_vx#${sxname} Shadowsocks"
+vl_vx_link3="{name: \"${sxname} Shadowsocks\", type: ss, server: $server_ip1, port: $port_vx, cipher: 2022-blake3-chacha20-poly1305, password: $sskey, udp: true }"
 vl_vx_link5="
   {
     \"type\": \"shadowsocks\",
@@ -1310,7 +1303,7 @@ vl_vx_link5="
     \"server\": \"$server_ip1\",
     \"server_port\": $port_vx,
     \"method\": \"2022-blake3-chacha20-poly1305\",
-    \"password\": \"$sskey1\"
+    \"password\": \"$sskey\"
   },"
 echo "$vl_vx_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_vx_link3" >> "$HOME/agsbx/jh.txt"
