@@ -1712,11 +1712,16 @@ else
 sendip="162.159.192.1"
 xendip="162.159.192.1"
 fi
-echo "VPS系统：$op"
+echo
+echo "---------------------------------------------------------"
+echo "系统相关信息："
+echo "系统版本：$op"
 echo "内核版本: $version"
 echo "CPU架构：$cpu"
 echo "虚拟化类型: $vi"
 echo "BBR算法: $bbr"
+echo "---------------------------------------------------------"
+echo
 echo "正在安装Argosbx脚本…………" && sleep 1
 if [ -n "$oap" ]; then
 setenforce 0 >/dev/null 2>&1
