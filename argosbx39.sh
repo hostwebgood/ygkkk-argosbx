@@ -73,6 +73,12 @@ amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 esac
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
+if command -v apk >/dev/null 2>&1; then
+apk update >/dev/null 2>&1 && apk add --no-cache openssl >/dev/null 2>&1
+elif command -v apt >/dev/null 2>&1; then
+export DEBIAN_FRONTEND=noninteractive
+apt update >/dev/null 2>&1 && apt install -y openssl >/dev/null 2>&1
+fi
 if [ ! -f "$HOME/agsbx/private.key" ]; then
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
@@ -89,7 +95,7 @@ fi
 if [ ! -f sbx_update ]; then
 echo "依赖安装中，请稍等……"
 if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar openssl virt-what >/dev/null 2>&1
+apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar virt-what >/dev/null 2>&1
 elif command -v apt >/dev/null 2>&1; then
 export DEBIAN_FRONTEND=noninteractive
 printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
