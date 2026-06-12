@@ -71,7 +71,6 @@ else
 bbr="Openvz/Lxc"
 fi
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
-[ -z "$(systemd-detect-virt 2>/dev/null)" ] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
 version=$(uname -r | cut -d "-" -f1)
 [[ -z $(systemd-detect-virt 2>/dev/null) ]] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
 case $(uname -m) in
@@ -80,38 +79,10 @@ arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
 amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 *) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
 esac
-if [ "$1" != "del" ]; then
-mkdir -p "$HOME/agsbx"
-if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache openssl >/dev/null 2>&1
-elif command -v apt >/dev/null 2>&1; then
-export DEBIAN_FRONTEND=noninteractive
-apt update >/dev/null 2>&1 && apt install -y openssl >/dev/null 2>&1
-fi
-if [ ! -f "$HOME/agsbx/private.key" ]; then
-command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
-command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
-FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-sskey=$(openssl rand -base64 32)
-echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
-echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
-echo "${sskey}" > "$HOME/agsbx/sskey"
-FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
-FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
-sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
-else
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
-FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
-echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
-fi
 if [ ! -f sbx_update ]; then
 echo "依赖安装中，请稍等……"
 if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar virt-what >/dev/null 2>&1
+apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar >/dev/null 2>&1
 elif command -v apt >/dev/null 2>&1; then
 export DEBIAN_FRONTEND=noninteractive
 printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
@@ -244,7 +215,7 @@ elif [ -n "$uuid" ]; then
 echo "$uuid" > "$HOME/agsbx/uuid"
 fi
 uuid=$(cat "$HOME/agsbx/uuid")
-echo "UUID密码：$uuid"
+echo "UUID：$uuid"
 }
 installxray(){
 echo
@@ -291,9 +262,27 @@ fi
 dekey=$(cat "$HOME/agsbx/xrk/dekey")
 enkey=$(cat "$HOME/agsbx/xrk/enkey")
 fi
-
 if [ -n "$xhp" ]; then
 xhp=xhpt
+command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
+command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FPX_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${FPX_SHA256}" > "$HOME/agsbx/FPX_SHA256"
+echo "${FPX_BASE64}" > "$HOME/agsbx/FPX_BASE64"
+FPX_SHA256=$(cat "$HOME/agsbx/FPX_SHA256" 2>/dev/null)
+FPX_BASE64=$(cat "$HOME/agsbx/FPX_BASE64" 2>/dev/null)
+
+if [ ! -f "$HOME/agsbx/private.key" ]; then
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FPX_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${FPX_SHA256}" > "$HOME/agsbx/FPX_SHA256"
+echo "${FPX_BASE64}" > "$HOME/agsbx/FPX_BASE64"
+FPX_SHA256=$(cat "$HOME/agsbx/FPX_SHA256" 2>/dev/null)
+FPX_BASE64=$(cat "$HOME/agsbx/FPX_BASE64" 2>/dev/null)
+fi
 if [ -z "${port_xh}" ] && [ ! -e "$HOME/agsbx/port_xh" ]; then
 port_xh=$(shuf -i 10000-65535 -n 1)
 echo "${port_xh}" > "$HOME/agsbx/port_xh"
@@ -344,6 +333,8 @@ vxp=vxpt
 if [ -z "$port_vx" ] && [ ! -e "$HOME/agsbx/port_vx" ]; then
 port_vx=$(shuf -i 10000-65535 -n 1)
 echo "$port_vx" > "$HOME/agsbx/port_vx"
+sskey=$(openssl rand -base64 32)
+echo "$sskey" > "$HOME/agsbx/sskey"
 elif [ -n "$port_vx" ]; then
 echo "$port_vx" > "$HOME/agsbx/port_vx"
 fi
@@ -485,6 +476,26 @@ cat > "$HOME/agsbx/sb.json" <<EOF
   "inbounds": [
 EOF
 insuuid
+if [ -n "$hyp" ] || [ -n "$tup" ] || [ -n "$anp" ]; then
+command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
+command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
+echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
+FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
+FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
+fi
+if [ ! -f "$HOME/agsbx/private.key" ]; then
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
+echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
+FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
+FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
+fi
 if [ -n "$hyp" ]; then
 hyp=hypt
 if [ -z "$port_hy2" ] && [ ! -e "$HOME/agsbx/port_hy2" ]; then
@@ -656,6 +667,8 @@ ssp=sspt
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
 port_ss=$(shuf -i 10000-65535 -n 1)
 echo "$port_ss" > "$HOME/agsbx/port_ss"
+sskey=$(openssl rand -base64 32)
+echo "${sskey}" > "$HOME/agsbx/sskey"
 elif [ -n "$port_ss" ]; then
 echo "$port_ss" > "$HOME/agsbx/port_ss"
 fi
@@ -1238,6 +1251,7 @@ cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
+sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
 private_key_s=$(cat "$HOME/agsbx/sbk/private_key" 2>/dev/null)
@@ -1247,23 +1261,24 @@ cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
 mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
+sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 hysteria2 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
-hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_xh" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
-if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
-echo "Hysteria2跳跃端口：$hy2_ports"
-cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-mport="$port_xh,$cmhy2pt"
-sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
-echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
-echo "${mport}" > "$HOME/agsbx/mport"
-echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
-fi
-vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
-vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+#hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_xh" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
+#if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
+#echo "Hysteria2跳跃端口：$hy2_ports"
+#cmhy2pt=$(echo $hy2_ports | tr ':' '-')
+#mport="$port_xh,$cmhy2pt"
+#sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
+#echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
+#echo "${mport}" > "$HOME/agsbx/mport"
+#echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
+#fi
+vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hpkp=${FPX_SHA256}#${sxname} Hysteria2"
+vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&pinSHA256=${FPX_SHA256}#${sxname} Hysteria2"
+vl_xh_link3="{name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FPX_SHA256}}"
 vl_xh_link5="
   {
     \"type\": \"hysteria2\",
@@ -1280,7 +1295,7 @@ vl_xh_link5="
         \"enabled\": true,
         \"server_name\": \"player.live-video.net\",
         \"certificate_public_key_sha256\": [
-           \"${FP_BASE64}\"
+           \"${FPX_BASE64}\"
         ],
         \"alpn\": [
            \"h3\"
@@ -1641,14 +1656,6 @@ exit
 elif [ "$1" = "rep" ]; then
 cleandel
 rm -rf "$HOME/agsbx"/{sb.json,xr.json,sbargoym.log,sbargotoken.log,argo.log,argoport.log,cdnym,name}
-command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
-command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
-FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
-echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
-FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
-FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 echo "正在重置Argosbx脚本相关配置……" && sleep 2
 echo
 elif [ "$1" = "list" ]; then
@@ -1713,15 +1720,15 @@ sendip="162.159.192.1"
 xendip="162.159.192.1"
 fi
 echo
-echo "---------------------------------------------------------"
-echo "系统相关信息："
-echo "系统版本：$op"
-echo "内核版本: $version"
-echo "CPU架构：$cpu"
-echo "虚拟化类型: $vi"
-echo "BBR算法: $bbr"
-echo "---------------------------------------------------------"
+echo "=========系统信息============"
 echo
+echo "  系统版本：$op"
+echo "  内核版本: $version"
+echo " CPU 架构：$cpu"
+echo "虚拟化类型: $vi"
+echo " BBR 算法: $bbr"
+echo 
+echo "============================="
 echo "正在安装Argosbx脚本…………" && sleep 1
 if [ -n "$oap" ]; then
 setenforce 0 >/dev/null 2>&1
@@ -1734,14 +1741,10 @@ echo
 echo "iptables开放所有端口"
 fi
 ins
-if [ -n "$hyjpt" ] && [ -n "$hyp" ] && [ -n "$xhp" ]; then
+if [ -n "$hyjpt" ] && [ -n "$hyp" ]; then
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 ip6tables -t nat -F PREROUTING >/dev/null 2>&1
-if [ ! -f "$HOME/agsbx/port_hy2" ]; then
-hyport=$(cat "$HOME/agsbx/port_xh")
-else
 hyport=$(cat "$HOME/agsbx/port_hy2")
-fi
 for port in $hyjpt; do
 iptables -t nat -A PREROUTING -p udp --dport "$port" -j DNAT --to-destination :$hyport
 ip6tables -t nat -A PREROUTING -p udp --dport "$port" -j DNAT --to-destination :$hyport
