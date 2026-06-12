@@ -41,10 +41,10 @@ export warp=${warp:-''}
 export name=${name:-''}
 export oap=${oap:-''}
 v46url="https://icanhazip.com"
-agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx39.sh"
+agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx6.sh"
 showmode(){
 echo "Argosbx脚本一键SSH命令生器在线网址：https://yonggekkk.github.io/argosbx/"
-echo "主脚本：bash <(curl -Ls https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx39.sh) 或 bash <(wget -qO- https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx39.sh)"
+echo "主脚本：bash <(curl -Ls https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx6.sh) 或 bash <(wget -qO- https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx6.sh)"
 echo "显示节点信息命令：agsbx list 【或者】 主脚本 list"
 echo "重置变量组命令：自定义各种协议变量组 agsbx rep 【或者】 自定义各种协议变量组 主脚本 rep"
 echo "更新脚本命令：原已安装的自定义各种协议变量组 主脚本 rep"
@@ -52,7 +52,7 @@ echo "更新Xray或Singbox内核命令：agsbx upx或ups 【或者】 主脚本 
 echo "重启脚本命令：agsbx res 【或者】 主脚本 res"
 echo "卸载脚本命令：agsbx del 【或者】 主脚本 del"
 echo "双栈VPS显示IPv4/IPv6节点配置命令：ippz=4或6 agsbx list 【或者】 ippz=4或6 主脚本 list"
-echo "---------------------------------------------------------"
+echo "-------------------------------------------------------------------------------------------------"
 echo
 }
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -244,7 +244,7 @@ elif [ -n "$uuid" ]; then
 echo "$uuid" > "$HOME/agsbx/uuid"
 fi
 uuid=$(cat "$HOME/agsbx/uuid")
-echo "UUID密码：$uuid"
+echo "UUID：$uuid"
 }
 installxray(){
 echo
@@ -1713,8 +1713,7 @@ sendip="162.159.192.1"
 xendip="162.159.192.1"
 fi
 echo
-echo "---------------------------------------------------------"
-echo "系统相关信息："
+echo "------------------------系统信息--------------------------"
 echo "系统版本：$op"
 echo "内核版本: $version"
 echo "CPU架构：$cpu"
@@ -1761,7 +1760,7 @@ echo "Argosbx脚本已安装"
 echo
 argosbxstatus
 echo
-echo "快捷方式如下："
+echo "Argosbx脚本快捷方式："
 showmode
 exit
 fi
