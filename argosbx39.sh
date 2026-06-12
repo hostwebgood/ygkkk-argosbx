@@ -63,32 +63,45 @@ echo "Argosbx一键无交互小钢炮脚本💣"
 echo "当前版本：Forked from V26.5.10 Mod V26.6.11"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
+# 1. 检查 TCP 拥塞控制算法
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
-bbr=`sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}'`
+    bbr=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
 elif [[ -n $(ping 10.0.0.2 -c 2 | grep ttl) ]]; then
-bbr="Openvz版bbr-plus"
+    bbr="Openvz版bbr-plus"
 else
-bbr="Openvz/Lxc"
+    bbr="Openvz/Lxc"
 fi
-op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
+
+# 2. 获取系统名称与内核版本（修复了括号优先级错误）
+op=$((cat /etc/redhat-release || cat /etc/os-release) 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
 version=$(uname -r | cut -d "-" -f1)
-[[ -z $(systemd-detect-virt 2>/dev/null) ]] && vi=$(virt-what 2>/dev/null) || vi=$(systemd-detect-virt 2>/dev/null)
-case $(uname -m) in
-armv7l) cpu=armv7 XRAY_ARCH=arm32-v7a SING_BOX_ARCH=armv7;;
-arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
-amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
-*) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
-esac
-if [ ! -f sbx_update ]; then
-echo "依赖安装中，请稍等……"
-if command -v apk >/dev/null 2>&1; then
-apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar >/dev/null 2>&1
-elif command -v apt >/dev/null 2>&1; then
-export DEBIAN_FRONTEND=noninteractive
-printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
-apt update >/dev/null 2>&1 && apt install -y busybox coreutils util-linux iptables iptables-persistent cron >/dev/null 2>&1
+
+# 3. 检测虚拟化架构
+if [[ -z $(systemd-detect-virt 2>/dev/null) ]]; then
+    vi=$(virt-what 2>/dev/null)
+else
+    vi=$(systemd-detect-virt 2>/dev/null)
 fi
-touch sbx_update
+
+# 4. 检测 CPU 架构
+case $(uname -m) in
+    armv7l) cpu=armv7 XRAY_ARCH=arm32-v7a SING_BOX_ARCH=armv7;;
+    arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
+    amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
+    *) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit 1;;
+esac
+
+# 5. 安装依赖
+if [ ! -f sbx_update ]; then
+    echo "依赖安装中，请稍等……"
+    if command -v apk >/dev/null 2>&1; then
+        apk update >/dev/null 2>&1 && apk add --no-cache unzip grep busybox-extras gcompat libc6-compat iptables procps gzip tar >/dev/null 2>&1
+    elif command -v apt >/dev/null 2>&1; then
+        export DEBIAN_FRONTEND=noninteractive
+        printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
+        apt update >/dev/null 2>&1 && apt install -y busybox coreutils util-linux iptables iptables-persistent cron >/dev/null 2>&1
+    fi
+    touch sbx_update
 fi
 v4v6(){
 v4=$( (command -v curl >/dev/null 2>&1 && curl -s4m5 -k "$v46url" 2>/dev/null) || (command -v wget >/dev/null 2>&1 && timeout 3 wget -4 --tries=2 -qO- "$v46url" 2>/dev/null) )
