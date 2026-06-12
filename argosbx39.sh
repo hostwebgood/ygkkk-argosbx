@@ -1739,7 +1739,6 @@ echo "内核版本: $version"
 echo "CPU 架构：$cpu"
 echo "虚拟化类型: $vi"
 echo "BBR 算法: $bbr"
-echo 
 echo "==================================="
 echo "正在安装Argosbx脚本…………" && sleep 1
 if [ -n "$oap" ]; then
