@@ -276,20 +276,20 @@ enkey=$(cat "$HOME/agsbx/xrk/enkey")
 fi
 if [ -n "$xhp" ]; then
 xhp=xhpt
-command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
-command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
-FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FPX_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/privateX.key" >/dev/null 2>&1
+command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/privateX.key" -out "$HOME/agsbx/certX.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/certX.pem 2>/dev/null | awk -F= '{print $NF}')
+FPX_BASE64=$(openssl x509 -in $HOME/agsbx/certX.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 echo "${FPX_SHA256}" > "$HOME/agsbx/FPX_SHA256"
 echo "${FPX_BASE64}" > "$HOME/agsbx/FPX_BASE64"
 FPX_SHA256=$(cat "$HOME/agsbx/FPX_SHA256" 2>/dev/null)
 FPX_BASE64=$(cat "$HOME/agsbx/FPX_BASE64" 2>/dev/null)
 
-if [ ! -f "$HOME/agsbx/private.key" ]; then
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
-FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FPX_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+if [ ! -f "$HOME/agsbx/privateX.key" ]; then
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/privateX.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/certX.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
+FPX_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/certX.pem 2>/dev/null | awk -F= '{print $NF}')
+FPX_BASE64=$(openssl x509 -in $HOME/agsbx/certX.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
 echo "${FPX_SHA256}" > "$HOME/agsbx/FPX_SHA256"
 echo "${FPX_BASE64}" > "$HOME/agsbx/FPX_BASE64"
 FPX_SHA256=$(cat "$HOME/agsbx/FPX_SHA256" 2>/dev/null)
@@ -328,8 +328,8 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
           ],
           "certificates": [
             {
-              "certificateFile": "$HOME/agsbx/cert.pem",
-              "keyFile": "$HOME/agsbx/private.key"
+              "certificateFile": "$HOME/agsbx/certX.pem",
+              "keyFile": "$HOME/agsbx/privateX.key"
             }
           ]
         }
@@ -1259,10 +1259,10 @@ private_key_x=$(cat "$HOME/agsbx/xrk/private_key" 2>/dev/null)
 public_key_x=$(cat "$HOME/agsbx/xrk/public_key" 2>/dev/null)
 short_id_x=$(cat "$HOME/agsbx/xrk/short_id" 2>/dev/null)
 enkey=$(cat "$HOME/agsbx/xrk/enkey" 2>/dev/null)
-cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
+#cmhy2pt=$(cat "$HOME/agsbx/cmhy2pt" 2>/dev/null)
 server_ip1=$(cat "$HOME/agsbx/server_ip1" 2>/dev/null)
-mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
-sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
+#mport=$(cat "$HOME/agsbx/mport" 2>/dev/null)
+#sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
 sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if [ -e "$HOME/agsbx/sing-box" ]; then
@@ -1298,7 +1298,7 @@ vl_xh_link5="
     \"server\": \"$server_ip1\",
     \"server_port\": $port_xh,
     \"server_ports\":[
-        $sbhy2pt
+        #$sbhy2pt
      ],
     \"hop_interval\": \"17s\",
     \"hop_interval_max\": \"30s\", 
@@ -1732,15 +1732,15 @@ sendip="162.159.192.1"
 xendip="162.159.192.1"
 fi
 echo
-echo "=========系统信息============"
+echo "============系统信息==============="
 echo
-echo "  系统版本：$op"
-echo "  内核版本: $version"
-echo " CPU 架构：$cpu"
+echo "系统版本：$op"
+echo "内核版本: $version"
+echo "CPU 架构：$cpu"
 echo "虚拟化类型: $vi"
-echo " BBR 算法: $bbr"
+echo "BBR 算法: $bbr"
 echo 
-echo "============================="
+echo "==================================="
 echo "正在安装Argosbx脚本…………" && sleep 1
 if [ -n "$oap" ]; then
 setenforce 0 >/dev/null 2>&1
