@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "当前版本：Forked from V26.5.10 Mod V26.6.11 V26.9.23"
+echo "当前版本：Forked from V26.5.10 Mod V26.6.11 V26.9.27"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
@@ -502,7 +502,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
         "listen": "::",
         "listen_port": ${port_hy2},
         "obfs": {
-          "type": "salamander",
+          "type": "gecko",
           "password": "${uuid}"
         },
         "users": [
@@ -1472,9 +1472,9 @@ echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
 echo "${mport}" > "$HOME/agsbx/mport"
 echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
 fi
-hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
-hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=salamander&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-hy2_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: salamander, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+hy2_link="hy2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=gecko&obfs-password=$uuid&hpkp=${FP_SHA256}#${sxname} Hysteria2"
+hy2_link1="hysteria2://$uuid@$server_ip:$port_hy2/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&obfs=gecko&obfs-password=$uuid&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
+hy2_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_hy2, ports: $cmhy2pt, hop-interval: 17, password: $uuid, obfs: gecko, obfs-password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 hy2_link5="
   {
     \"type\": \"hysteria2\",
@@ -1486,6 +1486,10 @@ hy2_link5="
      ],
     \"hop_interval\": \"17s\",
     \"hop_interval_max\": \"30s\", 
+    \"obfs\": {
+    \"type\": \"gecko\",
+    \"password\": \"$uuid\"
+    },
     \"password\": \"$uuid\",
     \"tls\": {
         \"enabled\": true,
@@ -1564,9 +1568,9 @@ argodomain=$(cat "$HOME/agsbx/sbargoym.log" 2>/dev/null)
 if [ -n "$argodomain" ]; then
 vlvm=$(cat $HOME/agsbx/vlvm 2>/dev/null)
 if [ "$vlvm" = "Vmess" ]; then
-vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo-TLS\", \"add\": \"wto.org\", \"port\": \"443\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
+vmatls_link1="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo-TLS\", \"add\": \"www.wto.org\", \"port\": \"443\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"tls\", \"sni\": \"$argodomain\", \"alpn\": \"\", \"fp\": \"chrome\"}" | base64 -w0)"
 echo "$vmatls_link1" >> "$HOME/agsbx/jh.txt"
-vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo\", \"add\": \"wto.org\", \"port\": \"80\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"\"}" | base64 -w0)"
+vma_link7="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo\", \"add\": \"www.wto.org\", \"port\": \"80\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$argodomain\", \"path\": \"/$uuid-vm?ed=2560\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vma_link7" >> "$HOME/agsbx/jh.txt"
 elif [ "$vlvm" = "Vless" ]; then
 vwatls_link1="vless://$uuid@yg$(cfip).ygkkk.dpdns.org:443?encryption=$enkey&flow=xtls-rprx-vision&type=ws&host=$argodomain&path=$uuid-vw?ed=2560&security=tls&sni=$argodomain&fp=chrome&insecure=0&allowInsecure=0#${sxname} Argo-TLS-ENC"
