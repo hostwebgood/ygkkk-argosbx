@@ -158,16 +158,44 @@ case "$warp" in *x6*) xryx='ForceIPv6' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='Fo
 fi
 }
 upxray(){
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/xray-$cpu"; out="$HOME/agsbx/xray"; (command -v curl >/dev/null 2>&1 && curl -Lo "$out" -# --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -O "$out" --tries=2 "$url")
-chmod +x "$HOME/agsbx/xray"
-sbcore=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
-echo "已安装Xray正式版内核：$sbcore"
+curl -L -o "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"  -# --retry 2 https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-$XRAY_ARCH.zip; unzip -qo "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip" xray -d "$HOME/agsbx"
+rm -rf "$HOME/agsbx/Xray-linux-$XRAY_ARCH.zip"
+if [[ -f "$HOME/agsbx/xray" ]]; then
+    chmod +x "$HOME/agsbx/xray"
+    xrv=$("$HOME/agsbx/xray" version 2>/dev/null | awk '/^Xray/{print $2}')
+    echo "已安装 Xray 内核，版本号：$xrv"
+else
+    echo "下载 xray 内核失败，请再安装一次，并检查VPS能否访问GitHub"
+    exit 1
+fi
 }
 upsingbox(){
-url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/sing-box-$cpu"; out="$HOME/agsbx/sing-box"; (command -v curl>/dev/null 2>&1 && curl -Lo "$out" -# --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -O "$out" --tries=2 "$url")
-chmod +x "$HOME/agsbx/sing-box"
-sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/version/{print $NF}')
-echo "已安装Sing-box正式版内核：$sbcore"
+#DEFAULT_VERSION='1.13.13'
+#API_RESPONSE=$(wget --no-check-certificate --server-response --tries=2 --timeout=3 -qO- "https://api.github.com/repos/SagerNet/sing-box/releases" 2>&1 | grep -E '^[ ]+HTTP/|tag_name')
+#if grep -q 'HTTP.* 200' <<< "$API_RESPONSE"; then
+#VERSION=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -V | sed -n '1p')
+#sbv=$(wget --no-check-certificate --tries=2 --timeout=3 -qO- https://api.github.com/repos/SagerNet/sing-box/releases | awk -F '["v]' -v var="tag_name.*$VERSION" '$0 ~ var {print $5; exit}')
+#else
+#sbv="$DEFAULT_VERSION"
+#fi
+
+#sbv='1.13.13'
+sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
+curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbv/sing-box-$sbv-linux-$SING_BOX_ARCH.tar.gz
+sbname="sing-box-$sbv-linux-$SING_BOX_ARCH"
+if [[ -f "$HOME/agsbx/sing-box.tar.gz" ]]; then
+    tar xzf "$HOME/agsbx/sing-box.tar.gz" -C "$HOME/agsbx"
+    mv "$HOME/agsbx/$sbname/sing-box" "$HOME/agsbx"
+    rm -rf "$HOME/agsbx/sing-box.tar.gz" "$HOME/agsbx/$sbname"
+    if [[ -f "$HOME/agsbx/sing-box" ]]; then
+        chmod +x "$HOME/agsbx/sing-box"
+        sbcore=$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/sing-box version/{print $3}')
+        echo "已安装 Sing-box 内核，版本号：$sbcore"
+    else
+        echo "下载 Sing-box 内核失败，请再安装一次，并检查VPS能否访问GitHub"
+        exit 1
+    fi
+fi
 }
 insuuid(){
 if [ -z "$uuid" ] && [ ! -e "$HOME/agsbx/uuid" ]; then
