@@ -80,12 +80,6 @@ arm64|aarch64) cpu=arm64 XRAY_ARCH=arm64-v8a SING_BOX_ARCH=arm64;;
 amd64|x86_64) cpu=amd64 XRAY_ARCH=64 SING_BOX_ARCH=amd64;;
 *) echo "目前脚本不支持当前系统的$(uname -m)架构" && exit
 esac
-check_brutal() {
-  IS_BRUTAL=false && command -v lsmod >/dev/null 2>&1 && lsmod 2>/dev/null | grep -q 'brutal' && IS_BRUTAL=true
-  [ "$IS_BRUTAL" = 'false' ] && command -v modprobe >/dev/null 2>&1 && modprobe brutal 2>/dev/null && IS_BRUTAL=true
-  echo "${IS_BRUTAL}" > "$HOME/agsbx/IS_BRUTAL"
-  IS_BRUTAL=$(cat "$HOME/agsbx/IS_BRUTAL" 2>/dev/null)
-}
 if [ "$1" != "del" ]; then
 mkdir -p "$HOME/agsbx"
 if command -v apk >/dev/null 2>&1; then
@@ -122,6 +116,12 @@ elif command -v apt >/dev/null 2>&1; then
 export DEBIAN_FRONTEND=noninteractive
 printf 'iptables-persistent iptables-persistent/autosave_v4 boolean true\niptables-persistent iptables-persistent/autosave_v6 boolean true\n' | debconf-set-selections
 apt update >/dev/null 2>&1 && apt install -y busybox coreutils util-linux iptables iptables-persistent cron >/dev/null 2>&1
+check_brutal() {
+  IS_BRUTAL=false && command -v lsmod >/dev/null 2>&1 && lsmod 2>/dev/null | grep -q 'brutal' && IS_BRUTAL=true
+  [ "$IS_BRUTAL" = 'false' ] && command -v modprobe >/dev/null 2>&1 && modprobe brutal 2>/dev/null && IS_BRUTAL=true
+  echo "${IS_BRUTAL}" > "$HOME/agsbx/IS_BRUTAL"
+  IS_BRUTAL=$(cat "$HOME/agsbx/IS_BRUTAL" 2>/dev/null)
+}
 fi
 touch sbx_update
 fi
