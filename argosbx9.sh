@@ -462,6 +462,18 @@ EOF
 insuuid
 command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
 command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 36500 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
+command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
+FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
+FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
+#echo "${private}" > "$HOME/agsbx/private.key"
+#echo "${cert}" > "$HOME/agsbx/cert.pem"
+echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
+echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
+#private=$(cat "$HOME/agsbx/private.key" 2>/dev/null)
+#cert=$(cat "$HOME/agsbx/cert.pem" 2>/dev/null)
+FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
+FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 if [ ! -f "$HOME/agsbx/private.key" ]; then
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/private.key"; out="$HOME/agsbx/private.key"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
 url="https://github.com/yonggekkk/argosbx/releases/download/argosbx/cert.pem"; out="$HOME/agsbx/cert.pem"; (command -v curl>/dev/null 2>&1 && curl -Ls -o "$out" --retry 2 "$url") || (command -v wget>/dev/null 2>&1 && timeout 3 wget -q -O "$out" --tries=2 "$url")
