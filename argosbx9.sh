@@ -637,6 +637,7 @@ ssp=sspt
 if [ ! -e "$HOME/agsbx/sskey" ]; then
 sskey=$("$HOME/agsbx/sing-box" generate rand 16 --base64)
 echo "$sskey" > "$HOME/agsbx/sskey"
+sskey=$(cat "$HOME/agsbx/sskey" 2>/dev/null)
 fi
 if [ -z "$port_ss" ] && [ ! -e "$HOME/agsbx/port_ss" ]; then
 port_ss=$(shuf -i 10000-65535 -n 1)
