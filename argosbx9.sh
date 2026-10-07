@@ -41,10 +41,10 @@ export warp=${warp:-''}
 export name=${name:-''}
 export oap=${oap:-''}
 v46url="https://icanhazip.com"
-agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx7.sh"
+agsbxurl="https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx9.sh"
 showmode(){
 echo "Argosbx脚本一键SSH命令生器在线网址：https://yonggekkk.github.io/argosbx/"
-echo "主脚本：bash <(curl -Ls https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx7.sh) 或 bash <(wget -qO- https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx7.sh)"
+echo "主脚本：bash <(curl -Ls https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx9.sh) 或 bash <(wget -qO- https://raw.githubusercontent.com/hostwebgood/ygkkk-argosbx/refs/heads/main/argosbx9.sh)"
 echo "显示节点信息命令：agsbx list 【或者】 主脚本 list"
 echo "重置变量组命令：自定义各种协议变量组 agsbx rep 【或者】 自定义各种协议变量组 主脚本 rep"
 echo "更新脚本命令：原已安装的自定义各种协议变量组 主脚本 rep"
@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "当前版本：Forked from V26.5.10 Mod V26.6.11 V26.9.27"
+echo "当前版本：Forked from V26.5.10 Mod V26.6.11 V26.10.7"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
