@@ -1250,27 +1250,17 @@ fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 hysteria2 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
-hy2_ports=$(iptables -t nat -nL --line 2>/dev/null | grep -w "$port_xh" | awk '{print $8}' | sed 's/dpts://; s/dpt://' | tr '\n' ',' | sed 's/,$//')
-if [ -n "$hy2_ports" ] && [ -n "$hyjpt" ]; then
-echo "Hysteria2跳跃端口：$hy2_ports"
-cmhy2pt=$(echo $hy2_ports | tr ':' '-')
-mport="$port_xh,$cmhy2pt"
-sbhy2pt=$(echo "$hy2_ports" | grep -o '[0-9]\+:[0-9]\+' | sed 's/.*/"&"/' | paste -sd,)
-echo "${cmhy2pt}" > "$HOME/agsbx/cmhy2pt"
-echo "${mport}" > "$HOME/agsbx/mport"
-echo "${sbhy2pt}" > "$HOME/agsbx/sbhy2pt"
+
 fi
-vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
-vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&mport=$mport&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
-vl_xh_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, ports: $cmhy2pt, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
+vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
+vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
+vl_xh_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
 vl_xh_link5="
   {
     \"type\": \"hysteria2\",
     \"tag\": \"${sxname} Hysteria2\"
     \"server\": \"$server_ip1\",
     \"server_port\": $port_xh,
-    \"server_ports\":[
-        $sbhy2pt
      ],
     \"hop_interval\": \"17s\",
     \"hop_interval_max\": \"30s\", 
