@@ -269,16 +269,7 @@ fi
 
 if [ -n "$xhp" ]; then
 xhp=xhpt
-if [ ! -f "$HOME/agsbx/private.key" ]; then
-command -v openssl >/dev/null 2>&1 && openssl ecparam -genkey -name prime256v1 -out "$HOME/agsbx/private.key" >/dev/null 2>&1
-command -v openssl >/dev/null 2>&1 && openssl req -new -x509 -days 363 -key "$HOME/agsbx/private.key" -out "$HOME/agsbx/cert.pem" -subj "/CN=player.live-video.net" >/dev/null 2>&1
-FP_SHA256=$(openssl x509 -fingerprint -noout -sha256 -in $HOME/agsbx/cert.pem 2>/dev/null | awk -F= '{print $NF}')
-FP_BASE64=$(openssl x509 -in $HOME/agsbx/cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 2>/dev/null)
-echo "${FP_SHA256}" > "$HOME/agsbx/FP_SHA256"
-echo "${FP_BASE64}" > "$HOME/agsbx/FP_BASE64"
-FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
-FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
-fi
+
 if [ -z "${port_xh}" ] && [ ! -e "$HOME/agsbx/port_xh" ]; then
 port_xh=$(shuf -i 10000-65535 -n 1)
 echo "${port_xh}" > "$HOME/agsbx/port_xh"
@@ -1754,7 +1745,11 @@ ins
 if [ -n "$hyjpt" ] && [ -n "$hyp" ] && [ -n "$xhp" ]; then
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 ip6tables -t nat -F PREROUTING >/dev/null 2>&1
-
+if [ ! -f "$HOME/agsbx/port_hy2" ]; then
+hyport=$(cat "$HOME/agsbx/port_hy2")
+else
+hyport=$(cat "$HOME/agsbx/port_xh")
+fi
 for port in $hyjpt; do
 iptables -t nat -A PREROUTING -p udp --dport "$port" -j DNAT --to-destination :$hyport
 ip6tables -t nat -A PREROUTING -p udp --dport "$port" -j DNAT --to-destination :$hyport
