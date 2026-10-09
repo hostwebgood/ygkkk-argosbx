@@ -1745,7 +1745,7 @@ ins
 if [ -n "$hyjpt" ] && [ -n "$hyp" ] && [ -n "$xhp" ]; then
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 ip6tables -t nat -F PREROUTING >/dev/null 2>&1
-if [ ! -f "$HOME/agsbx/port_hy2" ]; then
+if [ ! -f "$HOME/agsbx/port_xh" ]; then
 hyport=$(cat "$HOME/agsbx/port_hy2")
 else
 hyport=$(cat "$HOME/agsbx/port_xh")
