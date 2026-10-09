@@ -1251,7 +1251,6 @@ if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 hysteria2 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
 
-fi
 vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
 vl_xh_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
