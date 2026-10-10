@@ -145,7 +145,7 @@ xs6|s6x) s1outtag=warp-out; s2outtag=direct; x1outtag=warp-out; x2outtag=warp-ou
 esac
 fi
 fi
-case "$warp" in *x4*) wxryx='ForceIPv4' ;; *x6*) wxryx='ForceIPv6' ;; *) wxryx='ForceIP' ;; esac
+case "$warp" in *x4*) wxryx='ForceIPv4' ;; *x6*) wxryx='ForceIPv6' ;; *) wxryx='ForceIPv4v6' ;; esac
 if command -v curl >/dev/null 2>&1; then
 curl -s4m5 -k "$v46url" >/dev/null 2>&1 && v4_ok=true
 elif command -v wget >/dev/null 2>&1; then
@@ -158,13 +158,13 @@ timeout 3 wget -6 --tries=2 -qO- "$v46url" >/dev/null 2>&1 && v6_ok=true
 fi
 if [ "$v4_ok" = true ] && [ "$v6_ok" = true ]; then
 case "$warp" in *s4*) sbyx='prefer_ipv4' ;; *) sbyx='prefer_ipv6' ;; esac
-case "$warp" in *x4*) xryx='ForceIP' ;; *x*) xryx='ForceIP' ;; *) xryx='ForceIP' ;; esac
+case "$warp" in *x4*) xryx='ForceIP' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='ForceIPv4v6' ;; esac
 elif [ "$v4_ok" = true ] && [ "$v6_ok" != true ]; then
 case "$warp" in *s4*) sbyx='ipv4_only' ;; *) sbyx='prefer_ipv6' ;; esac
-case "$warp" in *x4*) xryx='ForceIPv4' ;; *x*) xryx='ForceIP' ;; *) xryx='ForceIP' ;; esac
+case "$warp" in *x4*) xryx='ForceIPv4' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='ForceIPv4v6' ;; esac
 elif [ "$v4_ok" != true ] && [ "$v6_ok" = true ]; then
 case "$warp" in *s6*) sbyx='ipv6_only' ;; *) sbyx='prefer_ipv4' ;; esac
-case "$warp" in *x6*) xryx='ForceIPv6' ;; *x*) xryx='ForceIP' ;; *) xryx='ForceIP' ;; esac
+case "$warp" in *x6*) xryx='ForceIPv6' ;; *x*) xryx='ForceIPv4v6' ;; *) xryx='ForceIPv4v6' ;; esac
 fi
 }
 upxray(){
@@ -1252,7 +1252,6 @@ fi
 if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
     echo "💣【 Xray-hysteria2 】节点信息如下："
     port_xh=$(cat "$HOME/agsbx/port_xh")
-
     vl_xh_link="hy2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&hpkp=${FP_SHA256}#${sxname} Hysteria2"
     vl_xh_link1="hysteria2://$uuid@$server_ip:$port_xh/?&insecure=1&sni=player.live-video.net&hop_interval=17&pinSHA256=${FP_SHA256}#${sxname} Hysteria2"
     vl_xh_link3="- {name: \"${sxname} Hysteria2\", type: hysteria2, server: $server_ip1, port: $port_xh, hop-interval: 17, password: $uuid, sni: player.live-video.net, skip-cert-verify: false, fingerprint: ${FP_SHA256}}"
@@ -1262,8 +1261,6 @@ if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
     \"tag\": \"${sxname} Hysteria2\",
     \"server\": \"$server_ip1\",
     \"server_port\": $port_xh,
-    \"hop_interval\": \"17s\",
-    \"hop_interval_max\": \"30s\",
     \"password\": \"$uuid\",
     \"tls\": {
         \"enabled\": true,
