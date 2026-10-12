@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "当前版本：Forked from V26.5.10 Mod V26.6.6 V26.10.11"
+echo "当前版本：Forked from V26.5.10 Mod V26.6.6 V26.10.12"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
@@ -278,7 +278,7 @@ port_xh=$(cat "$HOME/agsbx/port_xh")
 echo "Vless-xhttp-tls-UDP端口：$port_xh"
 cat >> "$HOME/agsbx/xr.json" <<EOF
 {
-  "tag": "xhttp-reality",
+  "tag": "xhttp-h3",
   "listen": "::",
   "port": ${port_xh},
   "protocol": "vless",
@@ -1254,10 +1254,10 @@ FP_SHA256=$(cat "$HOME/agsbx/FP_SHA256" 2>/dev/null)
 FP_BASE64=$(cat "$HOME/agsbx/FP_BASE64" 2>/dev/null)
 sbhy2pt=$(cat "$HOME/agsbx/sbhy2pt" 2>/dev/null)
 fi
-if grep xhttp-reality "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
+if grep xhttp-h3 "$HOME/agsbx/xr.json" >/dev/null 2>&1; then
 echo "💣【 Vless-xhttp-tls-UDP 】节点信息如下："
 port_xh=$(cat "$HOME/agsbx/port_xh")
-vl_xh_link="vless://$uuid@$server_ip:$port_xh?encryption=none&security=tls&sni=$ym_vl_re&alpn=h3&insecure=0&allowInsecure=0&pinSHA256=${FP_SHA256}&pcs=${FP_SHA256}&type=xhttp&path=$uuid&mode=auto#${sxname}Xhttp-UDP"
+vl_xh_link="vless://$uuid@$server_ip:$port_xh?encryption=none&security=tls&sni=$ym_vl_re&alpn=h3&insecure=0&allowInsecure=0&pinSHA256=${FP_SHA256}&pcs=${FP_SHA256}&type=xhttp&path=$uuid&mode=auto#${sxname} Xhttp-UDP"
 echo "$vl_xh_link" >> "$HOME/agsbx/jh.txt"
 echo "$vl_xh_link"
 echo
