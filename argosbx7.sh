@@ -283,7 +283,7 @@ elif [ -n "$port_xh" ]; then
 echo "$port_xh" > "$HOME/agsbx/port_xh"
 fi
 port_xh=$(cat "$HOME/agsbx/port_xh")
-echo "Vless-xhttp-tls-UDP端口：$port_xh"
+echo "Vless-XHTTP-TLS-UDP端口：$port_xh"
 cat >> "$HOME/agsbx/xr.json" <<EOF
 {
   "tag": "xhttp-h3",
