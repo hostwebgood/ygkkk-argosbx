@@ -280,7 +280,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
 {
   "tag": "xhttp-reality",
   "listen": "::",
-  "port": ${port_xu},
+  "port": ${port_xh},
   "protocol": "vless",
   "settings": {
     "clients": [
