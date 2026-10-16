@@ -878,6 +878,13 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
     "rules": [
       {
         "type": "field",
+        "ip": [
+          "${xendip}"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
         "ip": [ ${xip} ],
         "network": "tcp,udp",
         "outboundTag": "${x1outtag}"
