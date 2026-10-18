@@ -60,7 +60,7 @@ echo "甬哥Github项目 ：github.com/yonggekkk"
 echo "甬哥Blogger博客 ：ygkkk.blogspot.com"
 echo "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
 echo "Argosbx一键无交互小钢炮脚本💣"
-echo "版本：Forked from V26.5.10 Mod V26.6.6 V26.10.16"
+echo "版本：Forked from V26.5.10 Mod V26.6.6 V26.10.18"
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 hostname=$(uname -a | awk '{print $2}')
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
@@ -127,7 +127,7 @@ fi
 v4v6
 if echo "$v6" | grep -q '^2a09' || echo "$v4" | grep -q '^104.28'; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
-echo; echo "提示：已启用WARP出站，请注意订阅链接IP的正确性！"
+echo; echo "提示：已启用WARP出站，请注意节点链接中IP的正确性！"
 else
 if [ "$wap" != yes ]; then
 s1outtag=direct; s2outtag=direct; x1outtag=direct; x2outtag=direct; xip='"::/0", "0.0.0.0/0"'; sip='"::/0", "0.0.0.0/0"'; wap=warpargo
@@ -187,7 +187,7 @@ else
 fi
 }
 upsingbox(){
-#DEFAULT_VERSION='1.13.13'
+#DEFAULT_VERSION='1.14.3'
 #API_RESPONSE=$(wget --no-check-certificate --server-response --tries=2 --timeout=3 -qO- "https://api.github.com/repos/SagerNet/sing-box/releases" 2>&1 | grep -E '^[ ]+HTTP/|tag_name')
 #if grep -q 'HTTP.* 200' <<< "$API_RESPONSE"; then
 #VERSION=$(awk -F '["v-]' '/tag_name/{print $5}' <<< "$API_RESPONSE" | sort -V | sed -n '1p')
@@ -195,7 +195,7 @@ upsingbox(){
 #else
 #sbv="$DEFAULT_VERSION"
 #fi
-#sbv='1.13.5'
+#sbv='1.14.3'
 sbv=$(curl -Ls https://github.com/SagerNet/sing-box/releases/latest | grep -oP 'tag/v\K[0-9.]+' | head -n 1)
 curl -L -o "$HOME/agsbx/sing-box.tar.gz"  -# --retry 2 https://github.com/SagerNet/sing-box/releases/download/v$sbv/sing-box-$sbv-linux-$SING_BOX_ARCH.tar.gz
 sbname="sing-box-$sbv-linux-$SING_BOX_ARCH"
@@ -878,21 +878,9 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
     "rules": [
       {
         "type": "field",
-        "ip": [
-          "${xendip}"
-        ],
-        "outboundTag": "direct"
-      },
-      {
-        "type": "field",
         "ip": [ ${xip} ],
         "network": "tcp,udp",
         "outboundTag": "${x1outtag}"
-      },
-      {
-        "type": "field",
-        "network": "tcp,udp",
-        "outboundTag": "${x2outtag}"
       }
     ]
   }
@@ -1107,7 +1095,7 @@ else
 argoname='临时'
 nohup "$HOME/agsbx/cloudflared" tunnel --url http://localhost:$(cat $HOME/agsbx/argoport.log) --edge-ip-version auto --no-autoupdate --protocol http2 > $HOME/agsbx/argo.log 2>&1 &
 fi
-echo "申请Argo$argoname隧道中……请稍等"
+echo "正在申请Argo$argoname的隧道，请稍等……"
 sleep 8
 if [ -n "${ARGO_DOMAIN}" ] && [ -n "${ARGO_AUTH}" ]; then
 argodomain=$(cat "$HOME/agsbx/sbargoym.log" 2>/dev/null)
@@ -1165,7 +1153,7 @@ echo "未启动，安装失败！" && exit
 fi
 }
 argosbxstatus(){
-echo "=========当前内核运行状态========="
+echo "==================内核运行状态=================="
 procs=$(find /proc/*/exe -type l 2>/dev/null | grep -E '/proc/[0-9]+/exe' | xargs -r readlink 2>/dev/null)
 if echo "$procs" | grep -Eq 'agsbx/s' || pgrep -f 'agsbx/s' >/dev/null 2>&1; then
 echo "Sing-box (版本V$("$HOME/agsbx/sing-box" version 2>/dev/null | awk '/version/{print $NF}'))：运行中"
@@ -1255,7 +1243,7 @@ echo "*********************************************************"
 echo "节点配置："
 echo
 case "$server_ip" in
-104.28*|\[2a09*) echo "检测到使用WARP的IP作为客户端地址 (104.28或者2a09开头的IP)，请将客户端地址上的WARP的IP手动更换为VPS的IPV4或IPV6" && sleep 3 ;;
+104.28*|\[2a09*) echo "当前正在使用WARP的作为出站IP(104.28或者2a09开头的IP)，请将节点链接中WARP的IP手动更换为VPS的IPV4或IPV6" && sleep 3 ;;
 esac
 echo
 ym_vl_re=$(cat "$HOME/agsbx/ym_vl_re" 2>/dev/null)
@@ -1374,7 +1362,7 @@ echo "$vm_link"
 echo
 if [ -f "$HOME/agsbx/cdnym" ]; then
 echo "💣【 Vmess-ws-cdn 】节点信息如下："
-echo "注：默认地址 yg数字.ygkkk.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
+echo "默认地址 yg数字.ygkkk.dpdns.org 可自行更换优选IP域名，如是回源端口需手动修改443或者80系端口"
 vm_cdn_link="vmess://$(echo "{ \"v\": \"2\", \"ps\": \"${sxname} Argo\", \"add\": \"yg$(cfip).ygkkk.dpdns.org\", \"port\": \"$port_vm_ws\", \"id\": \"$uuid\", \"aid\": \"0\", \"scy\": \"auto\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"$xvvmcdnym\", \"path\": \"/$uuid-vm\", \"tls\": \"\"}" | base64 -w0)"
 echo "$vm_cdn_link" >> "$HOME/agsbx/jh.txt"
 echo "$vm_cdn_link"
@@ -1554,10 +1542,10 @@ echo "Argo隧道端口正在使用$vlvm-ws主协议端口：$(cat $HOME/agsbx/ar
 Argo域名：$argodomain
 $nametn
 
-1、💣443端口的$vlvm-ws-tls-argo节点(可自行更换优选IP与443系端口)
+1、💣443端口的$vlvm-ws-tls-argo节点(可自行更换优选IP与443系端口443、2053、2083、2087、2096、8443)
 ${vmatls_link1}${vwatls_link1}
 
-2、💣80端口的$vlvm-ws-argo节点(可自行更换优选IP与80系端口)
+2、💣80端口的$vlvm-ws-argo节点(可自行更换优选IP与80系端口80、8080、8880、2052、2082、2086、2095)
 ${vma_link7}${vwa_link2}
 "
 )
@@ -1620,7 +1608,6 @@ else
 nohup $HOME/agsbx/sing-box run -c $HOME/agsbx/sb.json >/dev/null 2>&1 &
 fi
 }
-
 if [ "$1" = "del" ]; then
 cleandel
 rm -rf "$HOME/agsbx" "$HOME/bin/agsbx"
@@ -1700,7 +1687,7 @@ echo "内核版本: $version"
 echo "CPU架构：$cpu"
 echo "虚拟化类型: $vi"
 echo "拥塞控制算法: $bbr"
-echo "拥塞控制队列: $qdisc"
+echo "队列调度算法: $qdisc"
 echo "---------------------------------------------------------"
 echo
 echo "正在安装Argosbx脚本…………" && sleep 1
