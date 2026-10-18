@@ -874,7 +874,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
 }
   ],
   "routing": {
-    "domainStrategy": "IPOnDemand",
+    "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
       "type": "field",
