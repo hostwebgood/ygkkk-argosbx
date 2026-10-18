@@ -877,6 +877,13 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
     "domainStrategy": "IPOnDemand",
     "rules": [
       {
+      "type": "field",
+      "ip": [
+        "${xendip}"
+      ],
+      "outboundTag": "direct"
+    },
+      {
         "type": "field",
         "ip": [ ${xip} ],
         "network": "tcp,udp",
