@@ -888,7 +888,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
     "servers": [
       "${cfdns}"
     ],
-    "queryStrategy": "${xryx}"
+    "queryStrategy": "UseIP"
   }
 }
 EOF
