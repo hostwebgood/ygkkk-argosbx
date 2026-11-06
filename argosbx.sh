@@ -834,44 +834,44 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
   ],
   "outbounds": [
     {
-      "protocol": "freedom",
-      "tag": "direct",
-      "settings": {
-      "domainStrategy":"${xryx}"
-     }
-    },
-    {
-      "tag": "x-warp-out",
-      "protocol": "wireguard",
-      "settings": {
-        "secretKey": "${pvk}",
-        "address": [
-          "172.16.0.2/32",
-          "${wpv6}/128"
-        ],
-        "peers": [
-          {
-            "publicKey": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-            "allowedIPs": [
-              "0.0.0.0/0",
-              "::/0"
-            ],
-            "endpoint": "[${xendip}]:2408"
-          }
-        ],
-        "reserved": ${res}
+            "protocol": "masque",
+            "settings": {
+                "address": "162.159.198.2",
+                "port": 443
+            },
+            "streamSettings": {
+                "method": "masque",
+                "masqueSettings": {
+                    "warp": {
+                        "privateKey": "MHcCAQEEIJ6MNFBN10mnKkiqrLXpcL+M+9kdGmxrMZmbWI7PmDbwoAoGCCqGSM49AwEHoUQDQgAEEB64jmm+JIs+cYCA2z7zCvEGeXAL8QZsfHX1rFGe51Q65ncG0c6V6XCiKazjjDTAEZ9Vtq7/yEVpC1IH+fOlTA==",
+                        "publicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIaU7MToJm9NKp8YfGxR6r+/h4mcG7SxI8tsW8OR1A5tv/zCzVbCRRh2t87/kxnP6lAy0lkr7qYwu+ox+k3dr6w==",
+                        "address": [
+                            "172.16.0.2/32",
+                            "2606:4700:110:8399:553a:959e:bdff:9a0a/128"
+                        ]
+                    }
+                },
+                "security": "tls",
+                "tlsSettings": {
+                    "serverName": "consumer-masque.cloudflareclient.com",
+                    "alpn": [
+                        "h2"
+                    ]
+                }
+            },
+            "tag": "warp-masque"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "warp-out",
+            "settings": {},
+            "streamSettings": {
+                "sockopt": {
+                    "dialerProxy": "warp-masque",
+                    "domainStrategy": "${wxryx}"
+                }
+            }
         }
-    },
-    {
-      "tag":"warp-out",
-      "protocol":"freedom",
-        "settings":{
-        "domainStrategy":"${wxryx}"
-       },
-       "proxySettings":{
-       "tag":"x-warp-out"
-     }
-}
   ],
   "routing": {
     "domainStrategy": "IPOnDemand",
