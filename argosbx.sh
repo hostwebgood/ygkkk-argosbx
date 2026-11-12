@@ -1508,8 +1508,8 @@ fi
 if grep snellv6 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Snell v6 】客户端信息如下："
 port_so=$(cat "$HOME/agsbx/port_so")
-$snellv6_link="- {name: \"${sxname} Snell v6\", type: snell, server: $server_ip1, port: $port_so, psk: \"$uuid\", version: 6, mode: default, udp: true, reuse: true }"
-$snellv6_link3="snell://$(echo -n "chacha20-ietf-poly1305:$uuid@$server_ip1:$port_so" | base64 -w0)?version=6&mode=default&reuse=1&udp=1#${sxname} Snell v6"
+snellv6_link="- {name: \"${sxname} Snell v6\", type: snell, server: $server_ip1, port: $port_so, psk: \"$uuid\", version: 6, mode: default, udp: true, reuse: true }"
+snellv6_link3="snell://$(echo -n "chacha20-ietf-poly1305:$uuid@$server_ip1:$port_so" | base64 -w0)?version=6&mode=default&reuse=1&udp=1#${sxname} Snell v6"
 echo "$snellv6_link" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link3" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link"
