@@ -1491,8 +1491,8 @@ snellv6_link3="
   {
     \"type\": \"snell\",
     \"tag\": \"${sxname} Snell\",
-    \"server\": \"$server_ip\",
-    \"server_port\": $server_ip,
+    \"server\": \"$server_ip1\",
+    \"server_port\": $port_so,
     \"version\": 6,
     \"psk\": \"$uuid\",
     \"mode\": \"default\",
