@@ -791,7 +791,7 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "mode":"default"
         },
 EOF
-fi
+else
 sop=soptargo
 fi
 }
