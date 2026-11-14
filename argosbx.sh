@@ -891,6 +891,7 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
             }
         ]
     }
+}    
 EOF
 if pidof systemd >/dev/null 2>&1 && [ "$EUID" -eq 0 ]; then
 cat > /etc/systemd/system/xr.service <<EOF
