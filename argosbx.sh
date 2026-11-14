@@ -871,17 +871,6 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
         }
   ],
   "routing": {
-    "domainStrategy": "IPOnDemand",
-    "rules": [
-      {
-        "type": "field",
-        "ip": [ ${xip} ],
-        "network": "tcp,udp",
-        "outboundTag": "${x1outtag}"
-      }
-    ]
-  },
-      {
         "domainStrategy": "AsIs",
         "rules": [
             {
