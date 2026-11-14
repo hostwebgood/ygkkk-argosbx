@@ -881,27 +881,27 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
       }
     ]
   },
-  {
+      {
         "domainStrategy": "AsIs",
         "rules": [
             {
                 "type": "field",
                 "domain": [
                     "www.youtube.com",
-                    "googlevideo.com"
-                ],
-                "outboundTag": "warp-out"
-            },
-            {
-                "type": "field",
-                "domain": [
-                    "geosite:youtube"
+                    "googlevideo.com",
+                    "youtubeeducation.com",
+                    "youtubegaming.com",
+                    "youtubekids.com",
+                    "youtube-ui.l.google.com",
+                    "youtube.googleapis.com",
+                    "ggpht.com",
+                    "ytimg.com",
+                    "youtube-nocookie.com"
                 ],
                 "outboundTag": "warp-out"
             }
         ]
     }
-}
 EOF
 if pidof systemd >/dev/null 2>&1 && [ "$EUID" -eq 0 ]; then
 cat > /etc/systemd/system/xr.service <<EOF
