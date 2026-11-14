@@ -871,27 +871,17 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
         }
   ],
   "routing": {
-        "domainStrategy": "AsIs",
-        "rules": [
-            {
-                "type": "field",
-                "domain": [
-                    "www.youtube.com",
-                    "googlevideo.com",
-                    "youtubeeducation.com",
-                    "youtubegaming.com",
-                    "youtubekids.com",
-                    "youtube-ui.l.google.com",
-                    "youtube.googleapis.com",
-                    "ggpht.com",
-                    "ytimg.com",
-                    "youtube-nocookie.com"
-                ],
-                "outboundTag": "warp-out"
-            }
-        ]
-    }
-}    
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [ ${xip} ],
+        "network": "tcp,udp",
+        "outboundTag": "${x1outtag}"
+      }
+    ]
+  }
+}
 EOF
 if pidof systemd >/dev/null 2>&1 && [ "$EUID" -eq 0 ]; then
 cat > /etc/systemd/system/xr.service <<EOF
