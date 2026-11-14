@@ -880,7 +880,27 @@ cat >> "$HOME/agsbx/xr.json" <<EOF
         "outboundTag": "${x1outtag}"
       }
     ]
-  }
+  },
+  {
+        "domainStrategy": "AsIs",
+        "rules": [
+            {
+                "type": "field",
+                "domain": [
+                    "www.youtube.com",
+                    "googlevideo.com"
+                ],
+                "outboundTag": "warp-out"
+            },
+            {
+                "type": "field",
+                "domain": [
+                    "geosite:youtube"
+                ],
+                "outboundTag": "warp-out"
+            }
+        ]
+    }
 }
 EOF
 if pidof systemd >/dev/null 2>&1 && [ "$EUID" -eq 0 ]; then
@@ -1508,8 +1528,8 @@ fi
 if grep snellv6 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
 echo "💣【 Snell v6 】节点信息如下："
 port_so=$(cat "$HOME/agsbx/port_so")
-snellv6_link="- {name: \"${sxname} Snell v6\", type: snell, server: $server_ip1, port: $port_so, psk: \"$uuid\", version: 6, mode: default, udp: true, reuse: true }"
-snellv6_link3="snell://$(echo -n "chacha20-ietf-poly1305:$uuid@$server_ip1:$port_so" | base64 -w0)?version=6&mode=default&reuse=1&udp=1#${sxname} Snell v6"
+snellv6_link="- {name: \"${sxname} Snell\", type: snell, server: $server_ip1, port: $port_so, psk: \"$uuid\", version: 6, mode: default, udp: true, reuse: true }"
+snellv6_link3="snell://$(echo -n "chacha20-ietf-poly1305:$uuid@$server_ip1:$port_so" | base64 -w0)?version=6&mode=default&reuse=1&udp=1#${sxname} Snell"
 echo "$snellv6_link" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link3" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link"
