@@ -280,7 +280,6 @@ fi
 dekey=$(cat "$HOME/agsbx/xrk/dekey")
 enkey=$(cat "$HOME/agsbx/xrk/enkey")
 fi
-
 if [ -n "$xhp" ]; then
 xhp=xhpt
 if [ -z "$port_xh" ] && [ ! -e "$HOME/agsbx/port_xh" ]; then
@@ -770,7 +769,6 @@ else
 vmp=vmptargo
 fi
 }
-
 xrsbso(){
 if [ -n "$sop" ]; then
 sop=sopt
@@ -781,8 +779,7 @@ elif [ -n "$port_so" ]; then
 echo "$port_so" > "$HOME/agsbx/port_so"
 fi
 port_so=$(cat "$HOME/agsbx/port_so")
-echo "Snell v6端口：$port_so"
-if [ -e "$HOME/agsbx/sb.json" ]; then
+echo "Snell端口：$port_so"
 cat >> "$HOME/agsbx/sb.json" <<EOF
       {
             "type":"snell",
@@ -794,42 +791,24 @@ cat >> "$HOME/agsbx/sb.json" <<EOF
             "mode":"default"
         },
 EOF
-else
-cat >> "$HOME/agsbx/xr.json" <<EOF
-    {
-         "tag": "socks5-xr",
-         "port": ${port_so},
-         "listen": "::",
-         "protocol": "socks",
-         "settings": {
-            "auth": "password",
-             "accounts": [
-               {
-               "user": "${uuid}",
-               "pass": "${uuid}"
-               }
-            ],
-            "udp": true
-          },
-            "sniffing": {
-            "enabled": true,
-            "destOverride": ["http", "tls", "quic"],
-            "metadataOnly": false
-            }
-         },
-EOF
 fi
 else
 sop=soptargo
 fi
 }
-
 xrsbout(){
 if [ -e "$HOME/agsbx/xr.json" ]; then
 sed -i '${s/,\s*$//}' "$HOME/agsbx/xr.json"
 cat >> "$HOME/agsbx/xr.json" <<EOF
   ],
   "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct",
+      "settings": {
+      "domainStrategy":"${xryx}"
+     }
+    },
     {
             "protocol": "masque",
             "settings": {
@@ -1506,22 +1485,26 @@ echo "$tuic5_link5"
 echo
 fi
 if grep snellv6 "$HOME/agsbx/sb.json" >/dev/null 2>&1; then
-echo "💣【 Snell v6 】节点信息如下："
+echo "💣【 Snell 】节点信息如下："
 port_so=$(cat "$HOME/agsbx/port_so")
 snellv6_link="- {name: \"${sxname} Snell\", type: snell, server: $server_ip1, port: $port_so, psk: \"$uuid\", version: 6, mode: default, udp: true, reuse: true }"
-snellv6_link3="snell://$(echo -n "chacha20-ietf-poly1305:$uuid@$server_ip1:$port_so" | base64 -w0)?version=6&mode=default&reuse=1&udp=1#${sxname} Snell"
+snellv6_link3="
+  {
+    \"type\": \"snell\",
+    \"tag\": \"${sxname} Snell\",
+    \"server\": \"$server_ip\",
+    \"server_port\": $server_ip,
+    \"version\": 6,
+    \"psk\": \"$uuid\",
+    \"mode\": \"default\",
+    \"reuse\": true
+  },"
 echo "$snellv6_link" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link3" >> "$HOME/agsbx/jh.txt"
 echo "$snellv6_link"
 echo
 echo "$snellv6_link3"
 echo
-#echo "请配合其他应用内置代理使用，勿做节点直接使用"
-#echo "客户端地址：$server_ip"
-#echo "客户端端口：$port_so"
-#echo "客户端用户名：$uuid"
-#echo "客户端密码：$uuid"
-#echo
 fi
 argodomain=$(cat "$HOME/agsbx/sbargoym.log" 2>/dev/null)
 [ -z "$argodomain" ] && argodomain=$(grep -a trycloudflare.com "$HOME/agsbx/argo.log" 2>/dev/null | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
